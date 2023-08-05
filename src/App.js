@@ -11,7 +11,7 @@ function App() {
         Michio Sun (孙迪往) is a developer based in Tokyo, Japan. 
         He currently attends school at Tsinghua University in Beijing, China, majoring in Computer Science.
         <br />
-        He is interested in full-stack development, machine learning, quantative finance, and quantum computing.
+        He is interested in machine learning, quantative finance, and quantum computing.
         <br />
         In his free time, he "enjoys" running marathons, playing the guitar, and watching motorsports.
       </p>
