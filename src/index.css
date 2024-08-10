@@ -7,6 +7,11 @@ a {
 }
 
 @import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700&display=swap");
+/* californian fb */
+@font-face {
+    font-family: "Californian FB";
+    src: url("fonts/californian-fb-bold.ttf");
+}
 
 * {
  box-sizing: border-box;
@@ -20,8 +25,12 @@ a {
  --title-color: hsl(0, 0%, 95%);
  --text-color: hsl(0, 0%, 75%);
  --body-color: hsl(0, 0%, 6%);
+ --highlight-color: hsla(0, 0%, 50%, 0.2);
+ --background-color: hsla(0, 0%, 20%, 0.2);
  --body-font: "Montserrat", sans-serif;
  --second-font: "Dancing Script", cursive;
+ --portfolio-font: "Californian FB", serif;
+ --header-font: "Montserrat", sans-serif;
  --h2-font-size: 1.25rem;
  --small-font-size: 0.813rem;
  --font-semi-bold: 600;

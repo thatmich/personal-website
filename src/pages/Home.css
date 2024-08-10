@@ -1,32 +1,463 @@
+@media screen and (min-width: 850px) {
+    .container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 8em;
+        padding-right: 8em;
+    }
+}
+@media screen and (max-width: 850px) {
+    .container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 4em;
+        padding-right: 4em;
+    }
+    
+}
+
 .Home {
     display: flex;
-    height: 100vh;
-    width: 100vw;
     flex-direction: column;
     justify-content: center;
+    align-items: center;
+    overflow-x: hidden;
 }
 
 .About{
     display: flex;
+    margin-top: 30vh;
     flex-direction: row;
-    justify-content: space-evenly;
-    margin-left: 5em;
-    max-width:400em;
-}
-
-h1 {
-    font-size: 6em;
-}
-
-.SelfDescription {
-    max-width: 50em;
-    line-height: 2;
+    justify-content: space-between;
+    align-items: center;
 }
 
 #profile_pic{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
+    float: right;
     max-width: 20em;
     border-radius: 10%;
+}
+
+@media screen and (min-width: 850px) {
+    .SelfDescription {
+        max-width: 50em;
+        line-height: 2;
+        padding-right: 3em;
+        h1{
+            font-family: var(--header-font);
+            font-size: 4em;
+            line-height: 1;
+            margin-bottom: 0.5em;
+        }
+    }
+}
+
+@media screen and (max-width: 850px) {
+    .SelfDescription {
+        max-width: 100%;
+        line-height: 1.5;
+        padding-right: 2em;
+        h1{
+            font-family: var(--header-font);
+            font-size: 3em;
+            line-height: 1;
+            margin-bottom: 0.5em;
+        }
+    }
+}
+
+@media screen and (max-width: 650px) {
+    .About{
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: center;
+        align-items: center;
+        margin-top: 5em;
+    }
+
+    #profile_pic{
+        position: relative;
+        float: none;
+        transform: translate(-4em, 0);
+        max-width: calc(100% + 8em);
+        border-radius: 0;
+    }
+
+    .SelfDescription {
+        max-width: 100%;
+        line-height: 1.5;
+        padding-right: 2em;
+        margin-top: 2em;
+        margin-bottom: 0em;
+        h1{
+            font-family: var(--header-font);
+            font-size: 2.5em;
+            line-height: 1;
+            margin-bottom: 0.5em;
+        }
+        p{
+            margin-bottom: 0;
+        }
+    }
+}
+
+.Work{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: left;
+    margin-top: 10vh;
+}
+
+.work-title{
+    margin-bottom: 1em;
+}
+
+.work-description{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    border-radius: 3em;
+}
+
+@media screen and (min-width: 750px) {
+    .timeline-item{
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 2em;
+        padding-top: 2em;
+        padding-bottom: 2em;
+        border-radius: 0;
+        border-bottom: 1px solid var(--highlight-color);
+        transition: background-color 0.3s ease;
+    }
+    .timeline-item-left{
+        margin-left: 5em;
+        margin-right: auto;
+        h3 {
+            font-family: var(--header-font);
+            font-size: 2.2rem;
+            margin-bottom: 0.15em;
+            transition: color 0.3s ease;
+            text-decoration: underline;
+        }
+        h3:hover {
+            color: var(--first-color);
+            cursor: pointer;
+        }
+        span{
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .timeline-item-location{
+            margin-top: 0.25em;
+        }
+    }
+}
+
+@media screen and (max-width: 750px) {
+    .timeline-item{
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 2fr;
+        gap: 2em;
+        padding-top: 2em;
+        padding-bottom: 2em;
+        border-radius: 0;
+        border-bottom: 1px solid var(--highlight-color);
+        transition: background-color 0.3s ease;
+    }
+    .timeline-item-left{
+        margin-left: 2em;
+        margin-right: 0;
+        h3 {
+            font-family: var(--header-font);
+            font-size: 1.5rem;
+            margin-bottom: 0.15em;
+            transition: color 0.3s ease;
+            text-decoration: underline;
+        }
+        h3:hover {
+            color: var(--first-color);
+            cursor: pointer;
+        }
+        span{
+            font-size: 1.25rem;
+            font-weight: bold;
+        }
+
+        .timeline-item-location{
+            margin-top: 0.25em;
+        }
+    }   
+}
+
+.timeline-item-right{
+    margin-left: auto;
+    margin-right: 5em;
+    h4 {
+        font-family: var(--header-font);
+        margin-bottom: 1em;
+        font-size: 1.5rem;
+    }
+    .timeline-item-description{
+        margin-left: 1em;
+        line-height: 1.25em;
+        list-style-type: circle;
+    }
+}
+
+
+@media screen and (max-width: 600px) {
+    .timeline-item{
+        display: flex;
+        flex-direction: column;
+        padding-top: 2em;
+        padding-bottom: 2em;
+        border-radius: 0;
+        border-bottom: 1px solid var(--highlight-color);
+        transition: background-color 0.3s ease;
+    }
+
+    .timeline-item-right{
+        padding-left: 2em;
+        padding-right: 2em;
+        width: 100%;
+        h4 {
+            font-size: 1.2em;
+        }
+    }
+    
+}
+
+.timeline-item-first{
+    border-radius: 2em 2em 0 0;
+}
+
+.timeline-item-last{
+    border-radius: 0 0 2em 2em;
+    border-bottom: none;
+}
+
+/* on hover */
+.timeline-item:hover{
+    background-color: var(--highlight-color);
+}
+
+.timeline-item:hover h3{
+    color: var(--first-color);
+}
+@media screen and (min-width: 750px) {
+    h2 {
+        font-size: 3em;
+        font-family: var(--header-font);
+    }
+}
+
+.nav__menu{
+    margin-right: 1em;
+}
+
+.Portfolio{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10vh;
+}
+
+.portfolio-item{
+    flex: 0 0 auto; 
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 2em;
+    transition: transform 0.3s ease;
+    width: 35vw;
+}
+
+.portfolio-header-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    position: relative; /* This makes the container the positioning context */
+}
+
+.portfolio-img{
+    max-width: 100%;
+    cursor: pointer;
+    border-radius: 2em 2em 0 0;
+}
+
+.portfolio-text{
+    position: absolute; /* Positioning the text absolutely within the container */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    width: 80%; /* Make the text container the same width as the image */
+    transform: translate(-50%, -50%); /* Offset the text by its own height and width to center it */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    text-align: center;
+    font-family: var(--portfolio-font);
+    font-size: 2em;
+}
+
+
+.portfolio-item:hover{
+    transform: scale(1.1);
+}
+
+.portfolio-text i {
+    margin-left: 0.5em;
+}
+
+.portfolio-header-container{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.portfolio-description{
+    flex-grow: 1;
+    display: flex;
+    background-color: var(--background-color);
+    width: 100%;
+    min-height: 6em;
+    padding: 1.5em;
+    line-height: 1.5em;
+    border-radius: 0 0 2em 2em;
+}
+
+
+.carousel-container {
+    position: relative; /* Ensure relative positioning */
+    display: flex;
+    flex-direction: column;
+    left: 50%;
+    right: 50%;
+    width: 100vw; /* Full viewport width */
+    margin-left: -50vw; /* Shift left by half the viewport width */
+    margin-right: -50vw; /* Shift right by half the viewport width */
+    margin-top: 1em;
+    overflow-x: visible; /* Allow horizontal overflow */
+    overflow-y: hidden; /* Hide vertical overflow if needed */
+}
+
+
+.carousel-wrapper {
+    display: flex;
+    width: 100%;
+    position: relative;
+}
+
+
+.carousel-content-wrapper {
+    overflow: hidden;
+    width: 100%;
+    height: 100%;
+}
+
+.carousel-content {
+    display: flex;
+    transition: all 250ms linear;
+    -ms-overflow-style: none;  /* hide scrollbar in IE and Edge */
+    scrollbar-width: none;  /* hide scrollbar in Firefox */
+}
+
+/* hide scrollbar in webkit browser */
+.carousel-content::-webkit-scrollbar, .carousel-content::-webkit-scrollbar {
+    display: none;
+}
+
+.carousel-content > * {
+    width: 100%;
+    flex-shrink: 0;
+    flex-grow: 1;
+}
+
+.carousel-content.show-2 > * {
+    width: 50%;
+}
+
+.carousel-content.show-3 > * {
+    width: calc(100% / 3);
+}
+
+.carousel-content.show-4 > * {
+    width: calc(100% / 4);
+}
+
+.portfolio-carousel-nav{
+    display: flex;
+    flex-direction: row;
+    justify-content: right;
+    align-items: center;
+}
+
+.carousel-nav-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5rem;
+    margin: 0.25em;
+    width: 2em;
+    height: 2em;
+    border-radius: 100%;
+    background-color: var(--background-color);
+    color: #b4b4b4;
+    user-select: none;
+}
+.carousel-nav-button:hover {
+    background-color: var(--highlight-color);
+    cursor: pointer;
+}
+
+.carousel-nav-button.disabled {
+    color: rgb(95, 95, 95);
+    background-color: var(--background-color);
+    cursor: default; 
+}
+
+.carousel-nav-button:focus {
+    outline: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+    .carousel-nav-button {
+        display: none;
+    }
+}
+
+.Contact{
+    display: flex;
+    flex-direction: column;
+    margin-top: 10vh;
+    margin-bottom: 5vh;
+}
+
+.contact-links{
+    display: flex;
+    flex-direction: row;
+    margin-top: 1.5em;
+}
+
+.contact-link-item{
+    font-size: 2em;
+    color: var(--text-color);
+    text-decoration: none;
+    margin-right: 0.5em;
+    transition: color 0.1s ease;
+}
+
+.contact-link-item:hover{
+    color: var(--first-color);
+}
+
+.Contact p{
+    margin-top: 1em;
 }

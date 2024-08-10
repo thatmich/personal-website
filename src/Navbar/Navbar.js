@@ -1,51 +1,155 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { IoClose, IoMenu } from "react-icons/io5";
+import Hamburger from 'hamburger-react';
 import "./Navbar.css";
 
 const Navbar = () => {
- return (
-   <header className="header">
-     <nav className="nav container">
-       <NavLink to="/" className="nav__logo">
-         Michio Sun
-       </NavLink>
+  const [isOpen, setIsOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 850);
 
-       <div
-         className={"nav__menu"}
-         id="nav-menu"
-       >
-         <ul className="nav__list">
-           <li className="nav__item">
-             <NavLink to="/" className="nav__link">
-               Home
-             </NavLink>
-           </li>
-           <li className="nav__item">
-             <NavLink to="/portfolio" className="nav__link">
-               Portfolio
-             </NavLink>
-           </li>
-           <li className="nav__item">
-             <NavLink
-               to="/contact"
-               className="nav__link"
-             >
-               Contact me
-             </NavLink>
-           </li>
-         </ul>
-         <div className="nav__close" id="nav-close">
-           <IoClose />
-         </div>
-       </div>
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
-       <div className="nav__toggle" id="nav-toggle">
-         <IoMenu />
-       </div>
-     </nav>
-   </header>
- );
+  const handleResize = () => {
+    if (window.innerWidth >= 850) {
+      setIsOpen(true);
+      setIsMobile(false);
+    }
+    else {
+      setIsOpen(false);
+      setIsMobile(true);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
+
+  return (
+    <header className="header">
+      <div className="container">
+        <nav className="nav__container">
+          <div
+            className="nav__logo"
+            onClick={(e) => {
+              e.preventDefault();
+              document
+                .querySelector("#about")
+                .scrollIntoView({ behavior: "smooth" });
+            }}
+          >
+            Michio Sun
+          </div>
+          {isMobile && (
+            <div className="nav-hamburger">
+              <Hamburger toggled={isOpen} toggle={toggleMenu} />
+            </div>
+          )}
+          {isOpen && (
+            <div className={`nav__menu`} id="nav-menu">
+              <ul className="nav__list">
+                <li className="nav__item">
+                  <div
+                    className="nav__link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document
+                        .querySelector("#about")
+                        .scrollIntoView({ behavior: "smooth" });
+                      setIsOpen(false);
+                    }}
+                  >
+                    About
+                  </div>
+                </li>
+                <li className="nav__item">
+                  <div
+                    className="nav__link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document
+                        .querySelector("#work")
+                        .scrollIntoView({ behavior: "smooth" });
+                      setIsOpen(false);
+                    }}
+                  >
+                    Work
+                  </div>
+                </li>
+                <li className="nav__item">
+                  <div
+                    className="nav__link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document
+                        .querySelector("#portfolio")
+                        .scrollIntoView({ behavior: "smooth" });
+                      setIsOpen(false);
+                    }}
+                  >
+                    Portfolio
+                  </div>
+                </li>
+                <li className="nav__item">
+                  <div
+                    className="nav__link"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      document
+                        .querySelector("#contact")
+                        .scrollIntoView({ behavior: "smooth" });
+                      setIsOpen(false);
+                    }}
+                  >
+                    Contact
+                  </div>
+                </li>
+                <li className="nav__item">
+                  <NavLink to="/blog" className="nav__link" onClick={() => setIsOpen(false)}>
+                    Blog
+                  </NavLink>
+                </li>
+                {isMobile && (
+                  // close button
+                  <li className="nav__item">
+                    <div
+                      className="nav__link"
+                      onClick={() => setIsOpen(false)}
+                    >
+                      <div className="close-button">
+                        {/* close icon */}
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="icon icon-tabler icon-tabler-x"
+                          width="24"
+                          height="24"
+                          viewBox="0 0 24 24"
+                          strokeWidth="2"
+                          stroke="currentColor"
+                          fill="none"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        >
+                          <path stroke="none" d="M0 0h24v24H0z" />
+                          <line x1="18" y1="6" x2="6" y2="18" />
+                          <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                      </div>
+
+                    </div>
+                  </li>
+                )}
+              </ul>
+            </div>
+          )}
+        </nav>
+      </div>
+    </header>
+  );
 };
 
 export default Navbar;

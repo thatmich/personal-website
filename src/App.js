@@ -3,6 +3,7 @@ import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
 import Home from "./pages/Home";
+import Blog from "./pages/blog/Blog";
 import DocumentMeta from 'react-document-meta';
 
 function App() {
@@ -24,7 +25,7 @@ function App() {
         <main className="main-content">
         <Routes>
           <Route path="/" element={<Home />} />
-          {/* <Route path="/blog" element={<Blog />} /> */}
+          <Route path="/blog" element={<Blog />} />
         </Routes>
       </main>
       </Router>
