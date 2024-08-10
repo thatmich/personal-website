@@ -1,16 +1,20 @@
 {
   "files": {
-    "main.css": "/static/css/main.4f65036c.css",
-    "main.js": "/static/js/main.8d86c4b2.js",
+    "main.css": "/static/css/main.b1c01fe2.css",
+    "main.js": "/static/js/main.1b625e22.js",
     "static/js/787.5809834d.chunk.js": "/static/js/787.5809834d.chunk.js",
+    "static/media/sancai-swirl.png": "/static/media/sancai-swirl.15760a493725f1031f4c.png",
+    "static/media/pink-swirl.png": "/static/media/pink-swirl.b1477c1dd7813789d5d5.png",
+    "static/media/mustang-swirl.png": "/static/media/mustang-swirl.595166b7ebae59795868.png",
     "static/media/websitepic.jpg": "/static/media/websitepic.ac64d73e627786e310a4.jpg",
+    "static/media/californian-fb-bold.ttf": "/static/media/californian-fb-bold.6ab94cfc4f1b2c3ae1b7.ttf",
     "index.html": "/index.html",
-    "main.4f65036c.css.map": "/static/css/main.4f65036c.css.map",
-    "main.8d86c4b2.js.map": "/static/js/main.8d86c4b2.js.map",
+    "main.b1c01fe2.css.map": "/static/css/main.b1c01fe2.css.map",
+    "main.1b625e22.js.map": "/static/js/main.1b625e22.js.map",
     "787.5809834d.chunk.js.map": "/static/js/787.5809834d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.4f65036c.css",
-    "static/js/main.8d86c4b2.js"
+    "static/css/main.b1c01fe2.css",
+    "static/js/main.1b625e22.js"
   ]
 }
