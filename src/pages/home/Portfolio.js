@@ -60,6 +60,7 @@ const Portfolio = () => {
                 <img className="portfolio-img" src={item.img}
                     alt={item.title}
                     onClick={() => openInNewTab(item.url)}
+                    loading="lazy"
                 />
                 <div className="portfolio-text" style={{color: item.title_color}}>
                     {item.title}
