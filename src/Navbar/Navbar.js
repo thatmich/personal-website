@@ -4,8 +4,9 @@ import Hamburger from 'hamburger-react';
 import "./Navbar.css";
 
 const Navbar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(window.innerWidth < 850);
+  const [isOpen, setIsOpen] = useState(!isMobile);
+  const firstColor = getComputedStyle(document.documentElement).getPropertyValue('--first-color');
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -22,6 +23,38 @@ const Navbar = () => {
     }
   };
 
+  const nav_link_click = (e, id) => {
+    e.preventDefault();
+    // color and expand the link
+    e.target.style.color = firstColor;
+    e.target.style.transform = "scale(1.1)";
+    e.target.style.transition = "color 0.1s, transform 0.1s";
+    setTimeout(() => {
+      e.target.style.color = "";
+      e.target.style.transform = "";
+      document.querySelector(id).scrollIntoView({ behavior: "smooth" });
+      if (isMobile)
+        setIsOpen(false);
+      else
+        setIsOpen(true);
+    }, 100);
+  };
+
+  const blog_click = (e) => {
+    // color and expand the link
+    e.target.style.color = firstColor;
+    e.target.style.transform = "scale(1.1)";
+    e.target.style.transition = "color 0.1s, transform 0.1s";
+    setTimeout(() => {
+      e.target.style.color = "";
+      e.target.style.transform = "";
+      if (isMobile)
+        setIsOpen(false);
+      else
+        setIsOpen(true);
+    }, 100);
+  };
+
   useEffect(() => {
     window.addEventListener("resize", handleResize);
     return () => {
@@ -35,12 +68,7 @@ const Navbar = () => {
         <nav className="nav__container">
           <div
             className="nav__logo"
-            onClick={(e) => {
-              e.preventDefault();
-              document
-                .querySelector("#about")
-                .scrollIntoView({ behavior: "smooth" });
-            }}
+            onClick={(e) => nav_link_click(e, "#about")}
           >
             Michio Sun
           </div>
@@ -55,13 +83,7 @@ const Navbar = () => {
                 <li className="nav__item">
                   <div
                     className="nav__link"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document
-                        .querySelector("#about")
-                        .scrollIntoView({ behavior: "smooth" });
-                      setIsOpen(false);
-                    }}
+                    onClick= {(e) => nav_link_click(e, "#about")}
                   >
                     About
                   </div>
@@ -69,13 +91,7 @@ const Navbar = () => {
                 <li className="nav__item">
                   <div
                     className="nav__link"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document
-                        .querySelector("#work")
-                        .scrollIntoView({ behavior: "smooth" });
-                      setIsOpen(false);
-                    }}
+                    onClick={(e) => nav_link_click(e, "#work")}
                   >
                     Work
                   </div>
@@ -83,13 +99,7 @@ const Navbar = () => {
                 <li className="nav__item">
                   <div
                     className="nav__link"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document
-                        .querySelector("#portfolio")
-                        .scrollIntoView({ behavior: "smooth" });
-                      setIsOpen(false);
-                    }}
+                    onClick={(e) => nav_link_click(e, "#portfolio")}
                   >
                     Portfolio
                   </div>
@@ -97,19 +107,13 @@ const Navbar = () => {
                 <li className="nav__item">
                   <div
                     className="nav__link"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      document
-                        .querySelector("#contact")
-                        .scrollIntoView({ behavior: "smooth" });
-                      setIsOpen(false);
-                    }}
+                    onClick={(e) => nav_link_click(e, "#contact")}
                   >
                     Contact
                   </div>
                 </li>
                 <li className="nav__item">
-                  <NavLink to="/blog" className="nav__link" onClick={() => setIsOpen(false)}>
+                  <NavLink to="/blog" className="nav__link" onClick={blog_click}>
                     Blog
                   </NavLink>
                 </li>
