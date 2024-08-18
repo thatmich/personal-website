@@ -1,28 +1,11 @@
 import React, { useState, useEffect } from "react";
 import Carousel from "./Carousel";
-import roformer_pic from "../../images/sancai-swirl.png"
-import singularity_pic from "../../images/pink-swirl.png"
-import jizu_pic from "../../images/mustang-swirl.png"
+import roformer_pic from "../../images/sancai-swirl-small.png"
+import singularity_pic from "../../images/pink-swirl-small.png"
+import jizu_pic from "../../images/mustang-swirl-small.png"
 const Portfolio = () => {
     const [show, setShow] = useState(3);
 
-    // set show based on window width
-    useEffect(() => {
-        const handleResize = () => {
-            if (window.innerWidth < 600) {
-                setShow(2);
-            } else if (window.innerWidth < 900) {
-                setShow(2);
-            } else {
-                setShow(3);
-            }
-        };
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => {
-            window.removeEventListener("resize", handleResize);
-        };
-    }, []);
     
 
     function openInNewTab(url) {
@@ -53,6 +36,24 @@ const Portfolio = () => {
             url: "https://byrvr.notion.site/Singularity-EAM-Documentation-655d01e58fbe4d06b846b497d018f8d5"
         },
     ];
+    
+    // set show based on window width
+    useEffect(() => {
+        const handleResize = () => {
+            if (window.innerWidth < 600) {
+                setShow(Math.min(2, portfolio_items.length));
+            } else if (window.innerWidth < 900) {
+                setShow(Math.min(2, portfolio_items.length));
+            } else {
+                setShow(Math.min(3, portfolio_items.length));
+            }
+        };
+        handleResize();
+        window.addEventListener("resize", handleResize);
+        return () => {
+            window.removeEventListener("resize", handleResize);
+        };
+    }, [portfolio_items.length]);
     
     const portfolio_divs = portfolio_items.map((item, index) => (
         <div className="portfolio-item" key={index}>

@@ -6,7 +6,12 @@ a {
     text-decoration: none;
 }
 
-@import url("https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@400;600;700&display=swap");
+/* montserrat */
+@font-face {
+    font-family: "Montserrat";
+    src: url("fonts/Montserrat-VariableFont_wght.ttf");
+}
+
 /* californian fb */
 @font-face {
     font-family: "Californian FB";
@@ -28,7 +33,6 @@ a {
  --highlight-color: hsla(0, 0%, 50%, 0.2);
  --background-color: hsla(0, 0%, 20%, 0.2);
  --body-font: "Montserrat", sans-serif;
- --second-font: "Dancing Script", cursive;
  --portfolio-font: "Californian FB", serif;
  --header-font: "Montserrat", sans-serif;
  --h2-font-size: 1.25rem;
@@ -36,6 +40,8 @@ a {
  --font-semi-bold: 600;
  --z-tooltip: 10;
  --z-fixed: 100;
+ --portfolio-margin: 2em;
+ --portfolio-first-margin: 2em;
 }
 
 
