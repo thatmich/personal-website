@@ -1,20 +1,21 @@
 {
   "files": {
-    "main.css": "/static/css/main.b1c01fe2.css",
-    "main.js": "/static/js/main.1b625e22.js",
+    "main.css": "/static/css/main.20cced14.css",
+    "main.js": "/static/js/main.e2b9828b.js",
     "static/js/787.5809834d.chunk.js": "/static/js/787.5809834d.chunk.js",
-    "static/media/sancai-swirl.png": "/static/media/sancai-swirl.15760a493725f1031f4c.png",
-    "static/media/pink-swirl.png": "/static/media/pink-swirl.b1477c1dd7813789d5d5.png",
-    "static/media/mustang-swirl.png": "/static/media/mustang-swirl.595166b7ebae59795868.png",
-    "static/media/websitepic.jpg": "/static/media/websitepic.ac64d73e627786e310a4.jpg",
+    "static/media/sancai-swirl-small.png": "/static/media/sancai-swirl-small.9f0c464ce82bd7a937db.png",
+    "static/media/pink-swirl-small.png": "/static/media/pink-swirl-small.b81c89c6c03ba2589351.png",
+    "static/media/mustang-swirl-small.png": "/static/media/mustang-swirl-small.52518989e66640f52fbc.png",
+    "static/media/Montserrat-VariableFont_wght.ttf": "/static/media/Montserrat-VariableFont_wght.7e687123cd4528224ce5.ttf",
+    "static/media/websitepic.jpg": "/static/media/websitepic.f5b7d710fbae96a0f070.jpg",
     "static/media/californian-fb-bold.ttf": "/static/media/californian-fb-bold.6ab94cfc4f1b2c3ae1b7.ttf",
     "index.html": "/index.html",
-    "main.b1c01fe2.css.map": "/static/css/main.b1c01fe2.css.map",
-    "main.1b625e22.js.map": "/static/js/main.1b625e22.js.map",
+    "main.20cced14.css.map": "/static/css/main.20cced14.css.map",
+    "main.e2b9828b.js.map": "/static/js/main.e2b9828b.js.map",
     "787.5809834d.chunk.js.map": "/static/js/787.5809834d.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.b1c01fe2.css",
-    "static/js/main.1b625e22.js"
+    "static/css/main.20cced14.css",
+    "static/js/main.e2b9828b.js"
   ]
 }
