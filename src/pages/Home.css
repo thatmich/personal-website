@@ -12,10 +12,18 @@
         width: 100%;
         margin-left: auto;
         margin-right: auto;
-        padding-left: 4em;
-        padding-right: 4em;
+        padding-left: 2em;
+        padding-right: 2em;
     }
-    
+
+    .timeline-item-company{
+        color: var(--first-color);
+    }
+
+    :root{
+        --portfolio-margin: 1em;
+        --portfolio-first-margin: 1em;
+    }
 }
 
 .Home {
@@ -24,6 +32,7 @@
     justify-content: center;
     align-items: center;
     overflow-x: hidden;
+    overflow-y: hidden;
 }
 
 .About{
@@ -274,7 +283,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    margin: 2em;
+    margin: var(--portfolio-margin);
     transition: transform 0.3s ease;
     width: 35vw;
 }
@@ -305,6 +314,14 @@
     text-align: center;
     font-family: var(--portfolio-font);
     font-size: 2em;
+    pointer-events: none;
+}
+
+@media screen and (max-width: 850px) {
+    .portfolio-text{
+        font-size: 1.5em;
+    }
+    
 }
 
 
@@ -381,15 +398,15 @@
 }
 
 .carousel-content.show-2 > * {
-    width: 50%;
+    width: calc(100% / 2 - var(--portfolio-margin) - var(--portfolio-first-margin));
 }
 
 .carousel-content.show-3 > * {
-    width: calc(100% / 3);
+    width: calc(100% / 3 - 2 * var(--portfolio-margin));
 }
 
 .carousel-content.show-4 > * {
-    width: calc(100% / 4);
+    width: calc(100% / 4 - 2 * var(--portfolio-margin));
 }
 
 .portfolio-carousel-nav{

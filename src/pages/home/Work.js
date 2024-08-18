@@ -9,7 +9,7 @@ const Work = () => {
             location: "Beijing, China",
             description: [
                 "Optimized performance of multiple self-driving car machine learning models by up to 30%",
-                "Enhanced model efficiency using PyTorch's torch.compile and NSight Systems, leading to faster inference times and reduced computational cost.",
+                "Enhanced model efficiency using PyTorch's torch.compile and NSight Systems, leading to faster training times and reduced computational cost.",
                 "Won Best Intern Team Award for outstanding performance in the internship program."
             ]
         },
