@@ -260,6 +260,18 @@
 .timeline-item:hover h3{
     color: var(--first-color);
 }
+
+.timeline-item-description-link{
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.timeline-item:hover .timeline-item-description-link{
+    color: var(--first-color);
+    cursor: pointer;
+}
+
 @media screen and (min-width: 750px) {
     h2 {
         font-size: 3em;
