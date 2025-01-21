@@ -61,7 +61,7 @@ const Work = () => {
         itemClassName += " timeline-item-last";
       }
   
-      // check link language
+      // check link lang
       if (item.company_url_cn) {
         if (navigator.language === "zh-CN") {
           item.company_url = item.company_url_cn;
