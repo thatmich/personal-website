@@ -58,7 +58,7 @@ const Portfolio = () => {
     const portfolio_divs = portfolio_items.map((item, index) => (
         <div className="portfolio-item" key={index}>
             <div className="portfolio-header-container">
-                <img className="portfolio-img" src={item.img}
+                <img className="portfolio-img" src={item.img.src}
                     alt={item.title}
                     onClick={() => openInNewTab(item.url)}
                     loading="lazy"

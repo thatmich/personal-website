@@ -6,7 +6,7 @@ const Work = () => {
         company_url_cn: "https://www.linkedin.com/company/terracottasec",
         role: "Interim CTO",
         date: "Sep 2024 - Jan 2025",
-        location: "Hong Kong (Remote)",
+        location: "Hong Kong / Beijing (Hybrid)",
         description: [
           "Led development of a cybersecurity SaaS product from 0 to market, achieving paying customers in 1 month.",
           "Established full-stack infrastructure (React, NodeJS, Python) and optimizing vendor costs.",
