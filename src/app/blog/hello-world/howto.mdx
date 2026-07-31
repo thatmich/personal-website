@@ -1,0 +1,44 @@
+import PostHeader from '../PostHeader'
+
+export const post = {
+    title: 'Test Post: Hello, World',
+    date: '2026-07-31',
+    tags: ['meta', 'test'],
+}
+
+export const metadata = {
+    title: `${post.title} — Michio Sun`,
+}
+
+<PostHeader post={post} />
+
+This is a test entry to preview the blog layout. It's written in **MDX**, so
+writing a post is just writing markdown in a file.
+
+## How to write a new post
+
+Create a folder under `src/app/blog/` with a `page.mdx` inside:
+
+```
+src/app/blog/my-new-post/page.mdx
+```
+
+Start it with the same few lines this file has — the `PostHeader` import and a
+`post` object with a title, date, and tags. The blog index finds and lists
+posts automatically, sorted by date. Then just write markdown below it:
+
+- Run `npm run dev` and the post hot-reloads as you type
+- Links, `inline code`, images, and code blocks all work out of the box
+
+```python
+def hello():
+    print("world")  # syntax shown in a styled block
+```
+
+> Blockquotes look like this.
+
+And because it's MDX, you can import and render React components right inside
+a post whenever plain markdown isn't enough — interactive demos, plots,
+whatever you need.
+
+[Back to all posts](/blog)
