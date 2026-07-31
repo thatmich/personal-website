@@ -2,8 +2,8 @@ import './App.css';
 import React from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Navbar from "./Navbar/Navbar";
-import Home from "./pages/Home";
-import Blog from "./pages/blog/Blog";
+import Home from "./views/Home";
+import Blog from "./views/blog/Blog";
 import DocumentMeta from 'react-document-meta';
 
 function App() {
