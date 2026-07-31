@@ -1,10 +1,23 @@
 const Work = () => {
     const timelineItems = [
       {
+        company: "EII Inc.",
+        company_url: "https://eii-net.co.jp/",
+        role: "Machine Learning Engineer",
+        date: "Sep 2025 - Present",
+        location: "Tokyo, Japan",
+        description: [
+          "Led the company's electronics recycling automation initiative. Trained VLAs with Imitation Learning and value functions for RL in JAX, in collaboration with Waseda University and various municipal governments.",
+          "Built end-to-end data collection and training pipelines spanning Franka, ALOHA, and UMI embodiments.",
+          "Designed and trained bottle classifier VLMs (Qwen, SAM) in PyTorch for coordinate prediction and instance segmentation; moved inference from API to local edge for a 10x speedup.",
+          "Built automated data tools and dashboards (React, FastAPI, MongoDB, AWS) and managed data operators for scalable training."
+        ]
+      },
+      {
         company: "Terracotta",
         company_url: "https://www.linkedin.com/company/terracottasec",
         company_url_cn: "https://www.linkedin.com/company/terracottasec",
-        role: "Interim CTO",
+        role: "Co-founder",
         date: "Sep 2024 - Jan 2025",
         location: "Hong Kong / Beijing (Hybrid)",
         description: [

@@ -9,7 +9,7 @@ const Contact = () => {
         <div className="Contact container">
             <h2 className="section-title">Contact</h2>
             <p>Let's get in touch!</p>
-            <p>sun-dw21(at)mails.tsinghua.edu.cn</p>
+            <p>thatmich.io(at)gmail.com</p>
             <div className="contact-links">
                 <a className="contact-link-item" href="https://www.linkedin.com/in/michiosun/" target="_blank" rel="noreferrer">
                     <FaLinkedin />

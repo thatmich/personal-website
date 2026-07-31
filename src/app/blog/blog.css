@@ -1,0 +1,179 @@
+@media screen and (min-width: 850px) {
+    .Blog.container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 8em;
+        padding-right: 8em;
+    }
+}
+@media screen and (max-width: 850px) {
+    .Blog.container {
+        width: 100%;
+        margin-left: auto;
+        margin-right: auto;
+        padding-left: 2em;
+        padding-right: 2em;
+    }
+}
+
+.Blog{
+    margin-top: 10em;
+    margin-bottom: 5em;
+}
+
+.Blog .section-title{
+    margin-bottom: 1em;
+}
+
+/* ---- post list (index page) ---- */
+
+.blog-posts{
+    display: flex;
+    flex-direction: column;
+    background-color: var(--background-color);
+    border-radius: 3em;
+}
+
+.blog-post{
+    display: block;
+    padding: 2em 5em;
+    border-bottom: 1px solid var(--highlight-color);
+    transition: background-color 0.3s ease;
+    color: inherit;
+    text-decoration: none;
+}
+
+.blog-post:first-child{
+    border-radius: 2em 2em 0 0;
+}
+
+.blog-post:last-child{
+    border-radius: 0 0 2em 2em;
+    border-bottom: none;
+}
+
+.blog-post:hover{
+    background-color: var(--highlight-color);
+    cursor: pointer;
+}
+
+.blog-post:hover .blog-post-title{
+    color: var(--first-color);
+}
+
+.blog-post-header{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5em;
+}
+
+.blog-post-title{
+    font-family: var(--header-font);
+    font-size: 2.2rem;
+    transition: color 0.3s ease;
+}
+
+.blog-post-date{
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.blog-post-tags{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin-top: 0.75em;
+}
+
+.blog-post-tag{
+    font-size: 0.85rem;
+    padding: 0.2em 0.9em;
+    border: 1px solid var(--highlight-color);
+    border-radius: 2em;
+}
+
+/* ---- post pages (MDX content) ---- */
+
+.blog-post-header-block{
+    margin-bottom: 2em;
+    padding-bottom: 1.5em;
+    border-bottom: 1px solid var(--highlight-color);
+}
+
+.Blog h1, .Blog h2, .Blog h3, .Blog h4{
+    font-family: var(--header-font);
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+}
+
+.Blog .blog-post-header h1,
+.Blog .blog-post-header h3{
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.Blog p{
+    line-height: 1.6;
+    margin-top: 1em;
+}
+
+.Blog a{
+    color: var(--first-color);
+    text-decoration: underline;
+}
+
+.Blog a.blog-post, .Blog a.nav__logo{
+    color: inherit;
+    text-decoration: none;
+}
+
+.Blog ul, .Blog ol{
+    margin-top: 1em;
+    margin-left: 1.5em;
+    line-height: 1.6;
+}
+
+.Blog code{
+    background-color: var(--highlight-color);
+    padding: 0.15em 0.4em;
+    border-radius: 0.4em;
+    font-size: 0.9em;
+}
+
+.Blog pre{
+    background-color: var(--background-color);
+    padding: 1.5em;
+    border-radius: 1em;
+    overflow-x: auto;
+    margin-top: 1em;
+}
+
+.Blog pre code{
+    background-color: transparent;
+    padding: 0;
+}
+
+.Blog blockquote{
+    border-left: 3px solid var(--first-color);
+    padding-left: 1em;
+    margin-top: 1em;
+    font-style: italic;
+}
+
+.Blog img{
+    max-width: 100%;
+    border-radius: 1em;
+}
+
+@media screen and (max-width: 750px) {
+    .blog-post{
+        padding: 2em;
+    }
+
+    .blog-post-title{
+        font-size: 1.5rem;
+    }
+}

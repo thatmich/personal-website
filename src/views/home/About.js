@@ -7,13 +7,11 @@ const About = () => {
             <div className="SelfDescription">
                 <h1>Michio Sun</h1>
                 <p>
-                I am a developer based in Tokyo, Japan, currently attending school at Tsinghua University in Beijing, China, majoring in Computer Science.
+                Hi! I'm a machine learning engineer based in Tokyo. I am generally interested in research and applications of AI for robotics, deep reinforcement learning, and ML optimizations.
                 <br />
-                Interested in machine learning optimizations and security.
+                Previously CS @ Tsinghua University in Beijing.
                 <br />
-                <span style={{fontWeight: "bold"}}>
-                    Currently looking for work! Feel free to contact me!
-                </span>
+                I am passionate about pushing the frontier of robotics. In my spare time, I enjoy running and making coffee.
                 </p>
             </div>
             

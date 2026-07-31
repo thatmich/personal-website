@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { NavLink } from "react-router-dom";
 import Hamburger from 'hamburger-react';
 import "./Navbar.css";
 
@@ -113,9 +112,9 @@ const Navbar = () => {
                   </div>
                 </li>
                 <li className="nav__item">
-                  <NavLink to="/blog" className="nav__link" onClick={blog_click}>
+                  <a href="/blog" className="nav__link" onClick={blog_click}>
                     Blog
-                  </NavLink>
+                  </a>
                 </li>
                 {isMobile && (
                   // close button

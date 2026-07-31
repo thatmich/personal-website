@@ -1,7 +1,12 @@
+import createMDX from '@next/mdx'
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: 'export', // Outputs a Single-Page Application (SPA).
     distDir: './build', // Changes the build output directory to `./build`.
+    pageExtensions: ['js', 'jsx', 'ts', 'tsx', 'md', 'mdx'],
   }
-   
-  export default nextConfig
+
+const withMDX = createMDX({})
+
+export default withMDX(nextConfig)

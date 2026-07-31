@@ -4,9 +4,13 @@
   "homepage": "https://michiosun.com",
   "private": true,
   "dependencies": {
+    "@mdx-js/loader": "^3.1.1",
+    "@mdx-js/react": "^3.1.1",
+    "@next/mdx": "^16.2.12",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
+    "@types/mdx": "^2.0.14",
     "gh-pages": "^6.1.1",
     "hamburger-react": "^2.5.1",
     "next": "^15.1.6",
