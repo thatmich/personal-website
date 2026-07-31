@@ -206,7 +206,7 @@
 }
 
 .timeline-item-right{
-    margin-left: auto;
+    margin-left: 0;
     margin-right: 5em;
     h4 {
         font-family: var(--header-font);
