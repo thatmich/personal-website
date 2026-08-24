@@ -170,6 +170,32 @@
     border-radius: 1em;
 }
 
+.Blog table{
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1.2em;
+    font-size: 0.95rem;
+    display: block;
+    overflow-x: auto;
+}
+
+.Blog th, .Blog td{
+    text-align: left;
+    padding: 0.6em 0.85em;
+    border-bottom: 1px solid var(--highlight-color);
+    white-space: nowrap;
+}
+
+.Blog th{
+    font-family: var(--header-font);
+    font-weight: 700;
+    color: var(--title-color);
+}
+
+.Blog td{
+    color: var(--text-color);
+}
+
 @media screen and (max-width: 750px) {
     .blog-post{
         padding: 2em;
