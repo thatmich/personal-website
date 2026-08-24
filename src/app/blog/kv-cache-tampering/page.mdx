@@ -1,0 +1,114 @@
+import PostHeader from '../PostHeader'
+import CacheIntro from './CacheIntro'
+import TamperToggle from './TamperToggle'
+import MerkleVerifier from './MerkleVerifier'
+import References, { Cite } from './References'
+import ContactLink from './ContactLink'
+
+export const post = {
+    title: "My Thesis at Tsinghua CS: Tampering with an LLM's KV Cache",
+    date: '2026-08-18',
+    tags: ['llm-security', 'confidential-computing', 'research'],
+}
+
+export const metadata = {
+    title: `${post.title} — Michio Sun`,
+}
+
+<PostHeader post={post} />
+
+## Preface
+Last year, I successfully defended my undergraduate thesis at Tsinghua University, and graduated from the Computer Science department. My work was on the attack and defense mechanisms of the KV cache. It was my first taste of research, and after a year of working in industry, I wanted to write a retrospective post.
+
+## LLMs in the cloud
+Organizations run multi-turn conversation LLMs on third-party clouds, and protect the model with 
+confidential computing mechanisms<Cite n={1} />. You can trust the model, and the computing environment, but you don't have control where the cache lives. 
+
+Modern LLMs store the key-value cache (KV cache for short, more on that later) on disk<Cite n={2} /> to further improve compute efficiency. Simply leaving the KV cache in storage lets a malicious attacker with storage access tamper with it, changing the intended inference results. I will later show how this attack works, and one defense mechanism that completely protects against it at the cost of only 5–9% throughput.
+
+But first, what even is a KV cache?
+
+## KV cache
+LLMs compute autoregressively, computing the next token based on all the tokens before it. A lot of the calculations are repeated, and a significant speedup method is to store the keys and values in cache. On the left below is the causal-attention triangle. One new row per token, and each row looks "back" at all the columns that came before it.
+
+The important thing to note is that a token's *key* and *value* never change once computed, so instead of recomputing the whole triangle at every step, we can simply store each column and keep it. The strip on the right side represents the columns pulled out and lined up one by one, which is the **KV cache**. 
+
+Try pressing **+ Add token** to watch a row light up on the left as a new block lands in the cache on the right.
+<CacheIntro />
+
+## The attack: rewrite a block
+If an attacker can reach the on-disk cache, they don't have to pursue other techniques like jailbreaking. Reaching it is more plausible than it sounds. Offloading the cache to host DRAM and disks is the entire point of the optimization<Cite n={2} />, and it places the cache outside the enclave's trust boundary — the confidential-computing threat model assumes CPU memory is untrusted<Cite n={1} />, so the hypervisor, the host kernel, and the cloud operator can read and rewrite those bytes directly. Multi-tenancy brings its own angles: leftover GPU state isn't always scrubbed between tenants<Cite n={4} />, and Rowhammer lets a co-tenant flip bits in shared cache blocks sitting in DRAM without any storage access at all<Cite n={5} />. Using the same model, we can generate a malicious system prompt and overwrite one of the blocks with it. Flip the switch to try it out:
+
+<TamperToggle />
+
+
+## The defense: hashing and a bit more
+A defense to this attack is to hash each KV cache block as it is generated, and combine those hashes into a Merkle tree<Cite n={3} />. We then seal only the tree's root hash inside a secure TEE. Hashing the blocks on their own isn't enough: an attacker with the same model can forge a block *and* recompute its matching hash, but they can't forge the root sealed in the enclave. If any block in storage changes, that change propagates up the tree into a different root; verifying is then just recomputing the root and comparing it against the sealed value, a single hash comparison.
+
+
+<MerkleVerifier />
+
+## Results
+
+I built this on top of a real inference pipeline and ran it against every attack from earlier (direct block edits, system-prompt swaps, and cross-session replays) on Llama 3.1 8B and 70B, using an A100 with Intel SGX for the enclave.
+
+Detection was the easy part: **every** tampering attempt was caught at load time. Any change to any block changes the root, and the trusted root lives in the enclave where the attacker can't reach it, so there's no way to alter the cache and still reproduce the sealed hash without breaking SHA-256.
+
+The cost is what I actually cared about, since guarding the cache means rebuilding the tree on every save and verifying on every load:
+
+<table className="results-table">
+  <thead>
+    <tr><th>Model</th><th>Throughput (undefended → defended)</th><th>Overhead</th></tr>
+  </thead>
+  <tbody>
+    <tr><td>Llama 3.1 8B</td><td>39.44 → 35.84 tok/s</td><td>−5.03%</td></tr>
+    <tr><td>Llama 3.1 70B</td><td>10.94 → 10.39 tok/s</td><td>−9.11%</td></tr>
+  </tbody>
+</table>
+
+Generation time rose 2.75% (70B) to 8.68% (8B): the fixed verification cost is a bigger slice of the smaller model's shorter runs. Memory stayed negligible: the Merkle tree adds about 0.5% on top of the cache, each turn persists a 48 KB proof, and the enclave holds a single 32-byte root no matter how large the cache grows.
+
+Complete detection for a single-digit throughput hit, and a security footprint of one hash. That is the tradeoff I set out to find.
+
+## Final Thoughts
+
+In retrospect, LLM security was a great introduction to research. The interesting problems live at the boundary between systems and trust. I liked the shape of the result: the entire defense reduces to one 32-byte secret in an enclave, and the discipline to check it before trusting a conversation. That's a smaller security footprint than anything I've worked on since.
+
+I now work on robot learning policies, and just like LLMs, state-of-the-art robot policies will need systems-level security answers before they ship. 
+
+If you found this article interesting, feel free to contact me on [X](https://x.com/MichioSun) or by email at <ContactLink />. I'm always looking for like-minded people to chat with!
+
+<References items={[
+    {
+        authors: 'NVIDIA Corporation',
+        title: 'NVIDIA Hopper Confidential Computing Whitepaper, v1.0',
+        venue: '2023',
+        url: 'https://images.nvidia.com/aem-dam/en-zz/Solutions/data-center/HCC-Whitepaper-v1.0.pdf',
+    },
+    {
+        authors: 'B. Gao, Z. He, P. Sharma, Q. Kang, D. Jevdjic, J. Deng, X. Yang, Z. Yu, and P. Zuo',
+        title: 'Cost-Efficient Large Language Model Serving for Multi-turn Conversations with CachedAttention',
+        venue: '2024 USENIX Annual Technical Conference (ATC ’24)',
+        url: 'https://www.usenix.org/conference/atc24/presentation/gao-bin-cost',
+    },
+    {
+        authors: 'Wikipedia contributors',
+        title: 'Merkle tree',
+        venue: 'Wikipedia, The Free Encyclopedia (accessed 2026-08-18)',
+        url: 'https://en.wikipedia.org/wiki/Merkle_tree',
+    },
+    {
+        authors: 'T. Sorensen and H. Khlaaf',
+        title: 'LeftoverLocals: Listening to LLM Responses Through Leaked GPU Local Memory',
+        venue: 'arXiv:2401.16603',
+        url: 'https://arxiv.org/abs/2401.16603',
+    },
+    {
+        authors: 'Y. Yamamoto and S. Matsuura',
+        title: 'Bit-Flip Vulnerability of Shared KV-Cache Blocks in LLM Serving Systems',
+        venue: 'arXiv:2604.17249',
+        url: 'https://arxiv.org/abs/2604.17249',
+    },
+]} />
+
+[Back to all posts](/blog)
