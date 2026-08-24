@@ -187,7 +187,7 @@
 }
 
 @media screen and (max-width: 720px) {
-    .panels { grid-template-columns: 1fr; }
+    .panels { grid-template-columns: minmax(0, 1fr); }
 }
 
 .panel {
@@ -195,6 +195,7 @@
     border-radius: 0.8em;
     padding: 1.1em;
     background-color: hsla(0, 0%, 100%, 0.02);
+    min-width: 0;
 }
 
 .panelTitle {
@@ -261,7 +262,26 @@
 }
 
 @media screen and (max-width: 860px) {
-    .panels3 { grid-template-columns: 1fr; }
+    .panels3 { grid-template-columns: minmax(0, 1fr); }
+
+    /* Once the panels stack there is no room to scroll a code line sideways,
+       and the injected SQL is the whole point of the figure: wrap it instead. */
+    .code {
+        white-space: pre-wrap;
+        overflow-wrap: anywhere;
+    }
+
+    /* Hanging indent so a wrapped continuation doesn't read as its own line. */
+    .code > span {
+        display: block;
+        padding-left: 1.7em;
+        text-indent: -1.7em;
+    }
+
+    .codeVuln,
+    .codeSafe {
+        padding-left: 2.1em;
+    }
 }
 
 .rawBytes {
@@ -377,6 +397,7 @@
     line-height: 1.55;
     font-size: 0.92rem;
     scroll-margin-top: 6em;
+    overflow-wrap: anywhere;
 }
 
 .refItem::marker {
@@ -442,4 +463,39 @@
     border-color: var(--kv-clean);
     background-color: var(--kv-clean-soft);
     cursor: default;
+}
+
+/* ---- phones: claw back horizontal room ---- */
+
+@media screen and (max-width: 560px) {
+    .fig {
+        padding: 1em;
+        border-radius: 0.9em;
+    }
+
+    .panel {
+        padding: 0.9em;
+    }
+
+    /* Full-width switch: the labels stop wrapping mid-word. */
+    .switch {
+        display: flex;
+        width: 100%;
+    }
+
+    .switchOpt {
+        flex: 1 1 0;
+        padding: 0.55em 0.6em;
+    }
+
+    .hint {
+        margin-left: 0;
+    }
+
+    /* The list indent doubles up with .Blog ol's margin; long citation URLs
+       need that width more than the numbers do. */
+    .refs .refList {
+        margin-left: 0;
+        padding-left: 1.3em;
+    }
 }
