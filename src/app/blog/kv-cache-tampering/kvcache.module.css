@@ -1,0 +1,445 @@
+/* Shared visual language for the KV-cache interactives.
+   Colors lean on the site tokens; clean/danger are local semantics. */
+
+.fig {
+    --kv-clean: hsl(145, 55%, 48%);
+    --kv-clean-soft: hsla(145, 55%, 48%, 0.16);
+    --kv-danger: hsl(2, 78%, 61%);
+    --kv-danger-soft: hsla(2, 78%, 61%, 0.16);
+    --kv-accent: var(--first-color);
+    --kv-accent-soft: hsla(28, 88%, 62%, 0.16);
+    --kv-line: hsla(0, 0%, 100%, 0.14);
+
+    border: 1px solid var(--kv-line);
+    border-radius: 1.1em;
+    padding: 1.5em;
+    margin: 2em 0;
+    background-color: hsla(0, 0%, 100%, 0.02);
+}
+
+.caption {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-top: 1.1em;
+    line-height: 1.55;
+}
+
+.controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6em;
+    margin-bottom: 1.3em;
+}
+
+.btn {
+    font-family: var(--body-font);
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--title-color);
+    background-color: hsla(0, 0%, 100%, 0.06);
+    border: 1px solid var(--kv-line);
+    border-radius: 0.6em;
+    padding: 0.5em 1em;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.btn:hover:not(:disabled) {
+    background-color: var(--kv-accent-soft);
+    border-color: var(--kv-accent);
+}
+
+.btn:disabled {
+    opacity: 0.4;
+    cursor: default;
+}
+
+.hint {
+    font-size: 0.85rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-left: 0.3em;
+}
+
+/* ---- KV block strip ---- */
+
+.strip {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55em;
+    align-items: stretch;
+}
+
+.block {
+    min-width: 4.4em;
+    padding: 0.6em 0.7em;
+    border-radius: 0.6em;
+    border: 1px solid var(--kv-line);
+    background-color: var(--kv-clean-soft);
+    text-align: center;
+    transition: background-color 0.25s ease, border-color 0.25s ease, transform 0.25s ease;
+    animation: pop 0.28s ease;
+}
+
+@keyframes pop {
+    from { transform: translateY(6px) scale(0.94); opacity: 0; }
+    to   { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+.blockLabel {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--title-color);
+    font-variant-numeric: tabular-nums;
+}
+
+.blockSub {
+    font-size: 0.68rem;
+    color: var(--text-color);
+    opacity: 0.75;
+    margin-top: 0.2em;
+    letter-spacing: 0.02em;
+}
+
+.blockDanger {
+    background-color: var(--kv-danger-soft);
+    border-color: var(--kv-danger);
+}
+
+/* CacheIntro strip: match the accent color of the attention matrix */
+.cacheBlock {
+    background-color: var(--kv-accent-soft);
+}
+
+.blockAccent {
+    border-color: var(--kv-accent);
+}
+
+/* ---- intro: attention matrix ---- */
+
+.introGrid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2em;
+    align-items: flex-start;
+}
+
+.introCol {
+    flex: 1 1 240px;
+    min-width: 240px;
+}
+
+.introColTitle {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 0.9em;
+}
+
+.matrix {
+    width: 100%;
+    max-width: 320px;
+    height: auto;
+}
+
+/* ---- toggle switch ---- */
+
+.switch {
+    display: inline-flex;
+    border: 1px solid var(--kv-line);
+    border-radius: 0.7em;
+    overflow: hidden;
+}
+
+.switchOpt {
+    font-family: var(--body-font);
+    font-size: 0.9rem;
+    font-weight: 600;
+    padding: 0.5em 1.2em;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    color: var(--text-color);
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.switchClean.active {
+    background-color: var(--kv-clean-soft);
+    color: var(--kv-clean);
+}
+
+.switchDanger.active {
+    background-color: var(--kv-danger-soft);
+    color: var(--kv-danger);
+}
+
+/* ---- attack: two panels ---- */
+
+.panels {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 1.2em;
+    margin-top: 1.3em;
+}
+
+@media screen and (max-width: 720px) {
+    .panels { grid-template-columns: 1fr; }
+}
+
+.panel {
+    border: 1px solid var(--kv-line);
+    border-radius: 0.8em;
+    padding: 1.1em;
+    background-color: hsla(0, 0%, 100%, 0.02);
+}
+
+.panelTitle {
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-bottom: 0.9em;
+}
+
+.chatRole {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-top: 0.9em;
+}
+
+.chatRole:first-child { margin-top: 0; }
+
+.chatText {
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-top: 0.25em;
+}
+
+.code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    background-color: hsla(0, 0%, 0%, 0.35);
+    border-radius: 0.5em;
+    padding: 0.8em 0.9em;
+    margin-top: 0.4em;
+    overflow-x: auto;
+    white-space: pre;
+}
+
+.codeVuln {
+    display: block;
+    background-color: var(--kv-danger-soft);
+    border-left: 2px solid var(--kv-danger);
+    padding-left: 0.4em;
+    margin-left: -0.4em;
+}
+
+.codeSafe {
+    display: block;
+    background-color: var(--kv-clean-soft);
+    border-left: 2px solid var(--kv-clean);
+    padding-left: 0.4em;
+    margin-left: -0.4em;
+}
+
+/* three-up attack layout */
+.panels3 {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1em;
+    margin-top: 1.3em;
+    align-items: start;
+}
+
+@media screen and (max-width: 860px) {
+    .panels3 { grid-template-columns: 1fr; }
+}
+
+.rawBytes {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 0.72rem;
+    line-height: 1.6;
+    letter-spacing: 0.02em;
+    color: var(--text-color);
+    opacity: 0.72;
+    background-color: hsla(0, 0%, 0%, 0.35);
+    border-radius: 0.5em;
+    padding: 0.7em 0.8em;
+    margin-top: 0.6em;
+    word-break: break-all;
+}
+
+.decoded {
+    font-size: 0.86rem;
+    line-height: 1.5;
+    border-radius: 0.5em;
+    padding: 0.7em 0.85em;
+    margin-top: 0.6em;
+    border-left: 2px solid var(--kv-line);
+    background-color: hsla(0, 0%, 100%, 0.03);
+}
+
+.decodedClean {
+    border-left-color: var(--kv-clean);
+    background-color: var(--kv-clean-soft);
+}
+
+.decodedDanger {
+    border-left-color: var(--kv-danger);
+    background-color: var(--kv-danger-soft);
+}
+
+.miniNote {
+    font-size: 0.78rem;
+    color: var(--text-color);
+    opacity: 0.7;
+    margin-top: 0.6em;
+    line-height: 1.45;
+}
+
+.banner {
+    display: flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 0.6em;
+    padding: 0.7em 1em;
+    margin-top: 1.2em;
+}
+
+.bannerDanger {
+    background-color: var(--kv-danger-soft);
+    color: var(--kv-danger);
+    border: 1px solid var(--kv-danger);
+}
+
+.bannerClean {
+    background-color: var(--kv-clean-soft);
+    color: var(--kv-clean);
+    border: 1px solid var(--kv-clean);
+}
+
+/* ---- merkle tree ---- */
+
+.tree {
+    width: 100%;
+    height: auto;
+    max-width: 640px;
+    display: block;
+    margin: 0 auto;
+}
+
+.teeLabel {
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+    fill: var(--text-color);
+}
+
+.nodeHash {
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 9px;
+    fill: var(--text-color);
+}
+
+.leafHit {
+    cursor: pointer;
+}
+
+/* ---- references ---- */
+
+.refs {
+    margin-top: 3.5em;
+    padding-top: 1.5em;
+    border-top: 1px solid var(--kv-line, hsla(0, 0%, 100%, 0.14));
+}
+
+.refs h2 {
+    scroll-margin-top: 6em;
+}
+
+.refList {
+    list-style: decimal;
+    padding-left: 1.5em;
+}
+
+.refItem {
+    margin-top: 0.8em;
+    line-height: 1.55;
+    font-size: 0.92rem;
+    scroll-margin-top: 6em;
+}
+
+.refItem::marker {
+    color: var(--text-color);
+    opacity: 0.6;
+}
+
+.refTitle {
+    color: var(--title-color);
+}
+
+.cite {
+    font-size: 0.72em;
+    line-height: 0;
+    font-weight: 600;
+    margin-left: 0.1em;
+}
+
+/* ---- contact link in prose ---- */
+
+.contact {
+    --kv-clean: hsl(145, 55%, 48%);
+    --kv-clean-soft: hsla(145, 55%, 48%, 0.16);
+    --kv-line: hsla(0, 0%, 100%, 0.14);
+
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    white-space: nowrap;
+}
+
+.copyBtn {
+    font-family: var(--body-font);
+    font-size: 0.72rem;
+    font-weight: 600;
+    color: var(--text-color);
+    background-color: hsla(0, 0%, 100%, 0.06);
+    border: 1px solid var(--kv-line);
+    border-radius: 0.45em;
+    padding: 0.18em 0.55em;
+    cursor: pointer;
+    transition: opacity 0.2s ease, background-color 0.2s ease, border-color 0.2s ease,
+        color 0.2s ease;
+}
+
+/* Reveal on hover only; keep visible on touch screens (no hover) and
+   while the "Copied" confirmation is showing. */
+@media (hover: hover) {
+    .copyBtn {
+        opacity: 0;
+        visibility: hidden;
+    }
+
+    .contact:hover .copyBtn,
+    .copyBtn.copied {
+        opacity: 1;
+        visibility: visible;
+    }
+}
+
+.copyBtn.copied {
+    color: var(--kv-clean);
+    border-color: var(--kv-clean);
+    background-color: var(--kv-clean-soft);
+    cursor: default;
+}
