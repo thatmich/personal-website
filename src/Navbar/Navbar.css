@@ -60,6 +60,11 @@
 }
 
 @media screen and (max-width: 849px) {
+    /* Until the width is measured the menu is rendered open; keep it from flashing on phones. */
+    .header--unmeasured .nav__menu {
+        display: none;
+    }
+
     .nav__close, .nav__toggle {
         display: none;
     }

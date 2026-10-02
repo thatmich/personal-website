@@ -3,9 +3,12 @@ import Hamburger from 'hamburger-react';
 import "./Navbar.css";
 
 const Navbar = () => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 850);
-  const [isOpen, setIsOpen] = useState(!isMobile);
-  const firstColor = getComputedStyle(document.documentElement).getPropertyValue('--first-color');
+  // The page is prerendered with no window, so start from the desktop layout
+  // (links in the HTML) and measure the real width once mounted.
+  const [isMobile, setIsMobile] = useState(false);
+  const [isOpen, setIsOpen] = useState(true);
+  const [measured, setMeasured] = useState(false);
+  const accentColor = () => getComputedStyle(document.documentElement).getPropertyValue('--first-color');
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -25,7 +28,7 @@ const Navbar = () => {
   const nav_link_click = (e, id) => {
     e.preventDefault();
     // color and expand the link
-    e.target.style.color = firstColor;
+    e.target.style.color = accentColor();
     e.target.style.transform = "scale(1.1)";
     e.target.style.transition = "color 0.1s, transform 0.1s";
     setTimeout(() => {
@@ -41,7 +44,7 @@ const Navbar = () => {
 
   const blog_click = (e) => {
     // color and expand the link
-    e.target.style.color = firstColor;
+    e.target.style.color = accentColor();
     e.target.style.transform = "scale(1.1)";
     e.target.style.transition = "color 0.1s, transform 0.1s";
     setTimeout(() => {
@@ -55,6 +58,8 @@ const Navbar = () => {
   };
 
   useEffect(() => {
+    handleResize();
+    setMeasured(true);
     window.addEventListener("resize", handleResize);
     return () => {
       window.removeEventListener("resize", handleResize);
@@ -62,7 +67,7 @@ const Navbar = () => {
   }, []);
 
   return (
-    <header className="header">
+    <header className={measured ? "header" : "header header--unmeasured"}>
       <div className="container">
         <nav className="nav__container">
           <div

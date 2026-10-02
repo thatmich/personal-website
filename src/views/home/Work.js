@@ -76,12 +76,12 @@ const Work = () => {
   
       // check link lang
       if (item.company_url_cn) {
-        if (navigator.language === "zh-CN") {
+        if (typeof navigator !== "undefined" && navigator.language === "zh-CN") {
           item.company_url = item.company_url_cn;
         }
       }
       else if (item.company_url_jp) {
-        if (navigator.language === "ja-JP") {
+        if (typeof navigator !== "undefined" && navigator.language === "ja-JP") {
           item.company_url = item.company_url_jp;
         }
       }
