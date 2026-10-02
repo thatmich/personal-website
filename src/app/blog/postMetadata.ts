@@ -3,6 +3,7 @@ import type { PostMeta } from './PostHeader'
 
 export const SITE_URL = 'https://michiosun.com'
 export const AUTHOR = 'Michio Sun'
+export const FEED = { 'application/rss+xml': '/feed.xml' }
 
 export const postUrl = (post: PostMeta) => `${SITE_URL}/blog/${post.slug}`
 
@@ -14,7 +15,7 @@ export function postMetadata(post: PostMeta): Metadata {
         title: `${post.title} — ${AUTHOR}`,
         description: post.description,
         authors: [{ name: AUTHOR, url: SITE_URL }],
-        alternates: { canonical: path },
+        alternates: { canonical: path, types: FEED },
         openGraph: {
             type: 'article',
             title: post.title,

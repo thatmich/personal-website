@@ -1,8 +1,9 @@
 import type { Metadata } from 'next'
 import { HomePage } from './client'
+import { FEED } from '../blog/postMetadata'
 
 export const metadata: Metadata = {
-    alternates: { canonical: '/' },
+    alternates: { canonical: '/', types: FEED },
 }
 
 export function generateStaticParams() {

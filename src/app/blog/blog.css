@@ -24,8 +24,35 @@
     margin-bottom: 5em;
 }
 
-.Blog .section-title{
+.blog-index-header{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1em;
     margin-bottom: 1em;
+}
+
+.Blog .blog-index-header .section-title{
+    margin: 0;
+}
+
+.Blog a.blog-rss-link{
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45em;
+    font-size: 0.85rem;
+    font-weight: 600;
+    padding: 0.3em 0.9em;
+    border: 1px solid var(--highlight-color);
+    border-radius: 2em;
+    color: var(--text-color);
+    text-decoration: none;
+    transition: color 0.3s ease, border-color 0.3s ease;
+}
+
+.Blog a.blog-rss-link:hover{
+    color: var(--first-color);
+    border-color: var(--first-color);
 }
 
 /* ---- post list (index page) ---- */

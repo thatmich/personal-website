@@ -1,6 +1,6 @@
 import '../index.css'
 import type { Metadata } from 'next'
-import { AUTHOR, SITE_URL } from './blog/postMetadata'
+import { AUTHOR, FEED, SITE_URL } from './blog/postMetadata'
  
 const description =
   'Michio Sun is a machine learning engineer in Tokyo working on AI for robotics. Projects, and a blog on robot learning and ML systems.'
@@ -13,6 +13,7 @@ export const metadata: Metadata = {
   icons: {
     icon: '/icon.png',
   },
+  alternates: { types: FEED },
   openGraph: { type: 'website', title: AUTHOR, description, url: '/', siteName: AUTHOR },
   twitter: { card: 'summary', title: AUTHOR, description },
 }
