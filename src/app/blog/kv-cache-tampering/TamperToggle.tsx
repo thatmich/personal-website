@@ -23,7 +23,7 @@ export default function TamperToggle() {
     const [tampered, setTampered] = useState(false)
 
     return (
-        <div className={styles.fig}>
+        <div className={`${styles.fig} ${styles.figWide}`}>
             <div className={styles.controls}>
                 <div className={styles.switch}>
                     <button

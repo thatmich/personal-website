@@ -147,6 +147,34 @@
 
 /* ---- post pages (MDX content) ---- */
 
+/* Running text sits in a narrow centred column, the way a newspaper article
+   does; figures and the appendix tables keep the full width of the page. */
+.Blog{
+    --measure: 600px;
+}
+
+.Blog > :is(p, h1, h2, h3, h4, ul, ol, blockquote, pre, table, section, .blog-post-header-block),
+.Blog > details > :is(summary, p, h1, h2, h3, h4, ul, ol, blockquote, pre){
+    max-width: var(--measure);
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Appendix tables: one that fits the column lines up with the text; a wider
+   one grows out evenly on both sides, up to the full page width. */
+.Blog > details > table{
+    width: fit-content;
+    min-width: min(100%, var(--measure));
+    max-width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.Blog > :is(ul, ol),
+.Blog > details > :is(ul, ol){
+    padding-left: 1.5em;
+}
+
 .blog-post-header-block{
     margin-bottom: 2em;
     padding-bottom: 1.5em;
