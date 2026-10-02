@@ -12,6 +12,8 @@ export const post = {
     tags: ['llm-security', 'confidential-computing', 'research'],
     slug: 'kv-cache-tampering',
     description: "How an attacker with storage access can tamper with an LLM's on-disk KV cache, and a Merkle-tree defense that costs 5–9% throughput. A retrospective on my Tsinghua undergraduate thesis.",
+    image: '/og/kv-cache-tampering.png',
+    imageAlt: 'Merkle tree over eight KV cache blocks, with the root hash sealed inside the TEE.',
 }
 
 export const metadata = postMetadata(post)

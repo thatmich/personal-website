@@ -30,18 +30,30 @@ export default async function BlogIndex() {
             <div className="blog-posts">
                 {posts.map((post) => (
                     <Link href={`/blog/${post.slug}`} className="blog-post" key={post.slug}>
-                        <article>
-                            <div className="blog-post-header">
-                                <h3 className="blog-post-title">{post.title}</h3>
-                                <span className="blog-post-date">{post.date}</span>
-                            </div>
-                            {post.tags && (
-                                <div className="blog-post-tags">
-                                    {post.tags.map((tag) => (
-                                        <span className="blog-post-tag" key={tag}>{tag}</span>
-                                    ))}
-                                </div>
+                        <article className={post.image ? 'blog-post-card blog-post-card--image' : 'blog-post-card'}>
+                            {post.image && (
+                                <img
+                                    className="blog-post-thumb"
+                                    src={post.image}
+                                    alt={post.imageAlt ?? ''}
+                                    width={1200}
+                                    height={630}
+                                    loading="lazy"
+                                />
                             )}
+                            <div className="blog-post-body">
+                                <div className="blog-post-header">
+                                    <h3 className="blog-post-title">{post.title}</h3>
+                                    <span className="blog-post-date">{post.date}</span>
+                                </div>
+                                {post.tags && (
+                                    <div className="blog-post-tags">
+                                        {post.tags.map((tag) => (
+                                            <span className="blog-post-tag" key={tag}>{tag}</span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
                         </article>
                     </Link>
                 ))}

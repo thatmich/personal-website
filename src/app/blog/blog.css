@@ -91,6 +91,27 @@
     color: var(--first-color);
 }
 
+/* A post with a preview image: thumbnail on the left, text beside it. */
+.blog-post-card--image{
+    display: flex;
+    align-items: center;
+    gap: 2em;
+}
+
+.blog-post-body{
+    flex: 1;
+    min-width: 0;
+}
+
+.Blog img.blog-post-thumb{
+    flex: none;
+    width: 18em;
+    height: auto;
+    border: 1px solid var(--highlight-color);
+    border-radius: 0.8em;
+    background-color: #000;
+}
+
 .blog-post-header{
     display: flex;
     align-items: baseline;
@@ -226,6 +247,16 @@
 @media screen and (max-width: 750px) {
     .blog-post{
         padding: 2em;
+    }
+
+    .blog-post-card--image{
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1.2em;
+    }
+
+    .Blog img.blog-post-thumb{
+        width: 100%;
     }
 
     .blog-post-title{
