@@ -1,0 +1,283 @@
+{
+  "source": "franka_description fr3 (Apache 2.0, Franka Robotics GmbH) + robotiq_description 2F-85 (BSD 3-Clause, PickNik Robotics)",
+  "viewBox": [
+    0,
+    0,
+    1000,
+    747
+  ],
+  "pxPerMetre": 781.25,
+  "groundY": 721.49,
+  "joints": {
+    "joint1": {
+      "link": "link1",
+      "limits": [
+        -2.9007,
+        2.9007
+      ],
+      "pivot": [
+        718.75,
+        461.34
+      ],
+      "fixedAt": 0.0
+    },
+    "joint2": {
+      "link": "link2",
+      "limits": [
+        -1.8361,
+        1.8361
+      ],
+      "pivot": [
+        718.75,
+        461.34
+      ],
+      "drive": "joint2",
+      "multiplier": 1.0,
+      "sign": -1
+    },
+    "joint3": {
+      "link": "link3",
+      "limits": [
+        -2.9007,
+        2.9007
+      ],
+      "pivot": [
+        893.32,
+        286.77
+      ],
+      "fixedAt": 0.0
+    },
+    "joint4": {
+      "link": "link4",
+      "limits": [
+        -3.077,
+        -0.1169
+      ],
+      "pivot": [
+        847.74,
+        241.19
+      ],
+      "drive": "joint4",
+      "multiplier": 1.0,
+      "sign": 1
+    },
+    "joint5": {
+      "link": "link5",
+      "limits": [
+        -2.8763,
+        2.8763
+      ],
+      "pivot": [
+        547.74,
+        176.74
+      ],
+      "fixedAt": 0.0
+    },
+    "joint6": {
+      "link": "link6",
+      "limits": [
+        0.4398,
+        4.6216
+      ],
+      "pivot": [
+        547.74,
+        176.74
+      ],
+      "drive": "joint6",
+      "multiplier": 1.0,
+      "sign": 1
+    },
+    "joint7": {
+      "link": "link7",
+      "limits": [
+        -3.0508,
+        3.0508
+      ],
+      "pivot": [
+        478.99,
+        176.74
+      ],
+      "fixedAt": 0.0
+    },
+    "robotiq_85_left_inner_knuckle_joint": {
+      "link": "inner-knuckle-left",
+      "limits": [
+        0.0,
+        0.8
+      ],
+      "pivot": [
+        469.07,
+        308.32
+      ],
+      "drive": "gripper",
+      "multiplier": 1.0,
+      "sign": -1
+    },
+    "robotiq_85_right_inner_knuckle_joint": {
+      "link": "inner-knuckle-right",
+      "limits": [
+        -0.8,
+        0.0
+      ],
+      "pivot": [
+        488.91,
+        308.32
+      ],
+      "drive": "gripper",
+      "multiplier": -1.0,
+      "sign": -1
+    },
+    "robotiq_85_left_knuckle_joint": {
+      "link": "knuckle-left",
+      "limits": [
+        0.0,
+        0.8
+      ],
+      "pivot": [
+        455.08,
+        303.23
+      ],
+      "drive": "gripper",
+      "multiplier": 1.0,
+      "sign": -1
+    },
+    "robotiq_85_right_knuckle_joint": {
+      "link": "knuckle-right",
+      "limits": [
+        -0.8,
+        0.0
+      ],
+      "pivot": [
+        502.9,
+        303.23
+      ],
+      "drive": "gripper",
+      "multiplier": -1.0,
+      "sign": -1
+    },
+    "robotiq_85_left_finger_tip_joint": {
+      "link": "tip-left",
+      "limits": [
+        -0.8,
+        0.0
+      ],
+      "pivot": [
+        426.06,
+        337.15
+      ],
+      "drive": "gripper",
+      "multiplier": -1.0,
+      "sign": -1
+    },
+    "robotiq_85_right_finger_tip_joint": {
+      "link": "tip-right",
+      "limits": [
+        0.0,
+        0.8
+      ],
+      "pivot": [
+        531.93,
+        337.15
+      ],
+      "drive": "gripper",
+      "multiplier": 1.0,
+      "sign": -1
+    }
+  },
+  "tcpNeutral": [
+    478.99,
+    375.64
+  ],
+  "scene": {
+    "pcA": {
+      "x": 234.38,
+      "size": [
+        156.25,
+        281.25
+      ]
+    },
+    "pcB": {
+      "x": 421.88,
+      "size": [
+        156.25,
+        78.12
+      ]
+    },
+    "stackOffset": [
+      -187.5,
+      -281.25
+    ]
+  },
+  "keyframes": [
+    {
+      "name": "neutral",
+      "joint2": -45.0,
+      "joint4": -135.0,
+      "joint6": 90.0,
+      "gripper": 0.0
+    },
+    {
+      "name": "reach",
+      "joint2": -24.39,
+      "joint4": -154.34,
+      "joint6": 129.94,
+      "gripper": 0.0
+    },
+    {
+      "name": "grip",
+      "joint2": -10.42,
+      "joint4": -159.52,
+      "joint6": 149.1,
+      "gripper": 0.0
+    },
+    {
+      "name": "gripClosed",
+      "joint2": -10.42,
+      "joint4": -159.52,
+      "joint6": 149.1,
+      "gripper": 23.61
+    },
+    {
+      "name": "raise",
+      "joint2": -37.81,
+      "joint4": -146.02,
+      "joint6": 108.21,
+      "gripper": 23.61
+    },
+    {
+      "name": "lift",
+      "joint2": -31.15,
+      "joint4": -111.53,
+      "joint6": 80.39,
+      "gripper": 23.61
+    },
+    {
+      "name": "aboveA",
+      "joint2": 20.91,
+      "joint4": -51.81,
+      "joint6": 72.72,
+      "gripper": 23.61
+    },
+    {
+      "name": "stack",
+      "joint2": 13.77,
+      "joint4": -71.89,
+      "joint6": 85.66,
+      "gripper": 23.61
+    },
+    {
+      "name": "release",
+      "joint2": 13.77,
+      "joint4": -71.89,
+      "joint6": 85.66,
+      "gripper": 0.0
+    },
+    {
+      "name": "retreat",
+      "joint2": 20.91,
+      "joint4": -51.81,
+      "joint6": 72.72,
+      "gripper": 0.0
+    }
+  ]
+}

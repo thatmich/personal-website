@@ -1,0 +1,375 @@
+import PostHeader from '../PostHeader'
+import { postMetadata } from '../postMetadata'
+import ArmStack from './ArmStack'
+import ControlLoop from './ControlLoop'
+import { Appendix, BuildUp, InterruptSources, PreemptionModel, RobotDropouts, SkipIsolcpus, SkipNohz } from './Charts'
+import References, { Cite } from '../kv-cache-tampering/References'
+
+export const post = {
+    title: 'Running DROID on a Single Device',
+    date: '2026-10-02',
+    tags: ['robotics'],
+    slug: 'droid-one-pc',
+    description: 'Running the DROID robot stack on one stock-Ubuntu PC instead of two: CPU isolation in place of a realtime kernel, and measurements of which kernel setting fixes what.',
+    image: '/og/droid-one-pc.png',
+    imageAlt: 'Line drawing of a Franka robot arm lowering a small PC onto a tower PC.',
+}
+
+export const metadata = postMetadata(post)
+
+<PostHeader post={post} />
+
+<ArmStack />
+
+The influential DROID paper<Cite n={1} /> showed many researchers and engineers how to set up a usable robotics stack, with 76k demonstration trajectories across 13 institutions, which was a lot of data (at the time).
+
+The system uses a Franka (FR3), three ZED cameras, and two computers — including one Next Unit of Computing (NUC) orchestrating realtime control, and a workstation running policies or collecting data<Cite n={2} />.
+
+I kept wondering why two computers were necessary, and whether one really beefy PC could handle both roles (which luckily I had).
+
+Yet, if one were to naively run the processes for these two computers into one, you would run into a lot of issues. Something as simple as rendering a cursor update could freeze the whole robot. Fortunately, work on running CPUs in realtime without the realtime kernel has been going on for the past two decades<Cite n={3} /><Cite n={4} />.
+
+**So which part of the standard recipe actually fixes the issue? And to what extent?** In this post, I explore an alternative way to run the DROID stack, using one device.
+
+## Background
+The software side of the DROID stack utilizes Polymetis<Cite n={5} />, developed by Facebook, to manage the controller. The NUC is recommended to run the realtime Linux kernel.
+
+### Why Realtime?
+Between the Franka Control Box and the client NUC, there is a 1000 Hz contract<Cite n={6} /> where the box sends 2373 bytes via UDP, containing robot state information, and the PC needs to reply with the desired motion for the next cycle in a packet of size 371 bytes.
+
+Below is that exchange. **Slow motion** walks through a single round trip; flip to **Realtime** to see what 1 kHz actually looks like, which is to say the individual packets disappear into a solid stream.
+
+<ControlLoop />
+
+If a packet doesn't make it in time, the robot replays the last received torque verbatim<Cite n={6} />. However, if **20 consecutive packets** are dropped, this would trigger the `communication_constraints_violation` exception, activate the protective stop, and the robot would freeze in place. Typically, a packet would take way less than 1 ms to arrive (p50 of about 114–116 µs on my system), but we want to decrease the worst-case delays. One long stall of 20 ms or more would be detrimental to the system.
+
+These protective stop triggers are detrimental for multiple reasons. For one, teleop data collection becomes incredibly unreliable. A freeze in the middle of the trajectory is the epitome of low quality data. Moreover, task completion success rates would decrease drastically. For example, a robot operating an espresso machine may spill the coffee grounds everywhere if it froze in the middle of executing the task. So to avoid this, it needs to meet the 1 kHz requirement. To satisfy this contract, Franka's recommended method is to use the realtime Linux kernel<Cite n={7} />.
+
+### Linux Realtime Kernel
+Realtime control needs **determinism**, which normal Linux kernels don't provide. A high priority task can be bumped off the CPU core (or preempted, in proper jargon), if the OS deems another task more important. For example in the cursor rendering example I mentioned, that is a higher priority task. And this isn't easily preemptible by a user process.
+
+Worst case scenario could be a few milliseconds of a process delay, which is irrelevant for most users. However, in robotics, this could have detrimental consequences.
+
+There are multiple preemption modes in Linux, and the one recommended here is `PREEMPT_RT`. In this mode, anything the kernel runs can be preempted, and it performs a minimal amount of work when handling interrupts. There are some other tricks that the kernel does to improve determinism in running code too. The end result is that latencies drop very low<Cite n={8} />.
+
+However, there are some tradeoffs that are being made here for lower latencies. For one, overall throughput is lower: `PREEMPT_RT` turns interrupt handlers into kernel threads, and most spinlocks become sleeping `rt_mutex`es, both of which add overhead<Cite n={8} />.
+
+Another tradeoff is incompatibility with certain drivers. Most in-tree drivers work fine under `PREEMPT_RT` now that it's becoming more standard, but out-of-tree and proprietary drivers can be a problem. NVIDIA's GPU driver, for example, is officially unsupported on RT kernels and refuses to build unless you explicitly override the check<Cite n={7} />.
+
+That's why DROID needs a second computer. The workstation runs the GPU, and the NUC facilitates communications on the RT kernel. However, having an additional device is more costly, and another layer of friction to deployment. 
+
+So with all that being said, here's how I got the robot moving.
+
+## Method
+The kernel has a few settings that you can turn on to isolate a CPU so that it can be a specialized CPU for a certain user task. Below is a brief introduction of each, but if you want to learn more, Frederic Weisbecker's series on CPU isolation<Cite n={3} /> is a good read to get started.
+
+### CPU Isolation `isolcpus`
+By default, the kernel scheduler will assign any task to any CPU. This means that our 1000 Hz communication process might get interrupted by another user process, or an unbound kernel thread. `isolcpus` takes the CPUs out of the scheduler's load balancing. So only tasks the user pins there explicitly get run, which means other processes won't interrupt ours<Cite n={9} />.
+
+### Offload RCU Callbacks `rcu_nocbs`
+The kernel uses RCU (read-copy-update) to let readers access shared data without locks. When old data is no longer in use, the kernel runs a callback to free it. By default, these callbacks run on the CPU that queued them, interrupting whatever is running there. `rcu_nocbs` moves them onto kernel threads that can live on the housekeeping cores, so the isolated cores don't have to do this cleanup<Cite n={9} />.
+
+### Eliminate Timer Ticks `nohz_full`
+Even though other processes won't interrupt ours, there are other things that could. One of the biggest culprits is the timer tick. Each core has a timer interrupt, which triggers around a thousand times a second for various bookkeeping reasons. By turning off the timer tick for our designated CPUs, we reduce even more interruptions in the process<Cite n={10} />.
+
+In addition, the tick is what drives RCU's per-CPU bookkeeping, so removing it also removes the RCU softirqs that would otherwise interrupt the core. `nohz_full` also turns on `rcu_nocbs` for the same cores.
+
+### Eliminate Interrupt Requests `irqaffinity`
+Just like timer ticks, hardware interrupt requests (such as the arrival of a network packet, SSD read/write completion, or USB input) may disrupt the existing task. `irqaffinity` sets the default allowed CPUs for device interrupts to the housekeeping cores, so that these interrupts stay off the isolated CPUs<Cite n={9} />. The one exception is the robot's own network card: I deliberately steer its interrupts onto the isolated cores, so each packet is handled right next to the control thread.
+
+### Disabling hyperthreading
+Hyperthreading lets two hardware threads run at the same time on one physical core, sharing its execution units. I found this one empirically: with hyperthreading on, the robot still froze even with all the other settings applied. Turning it off in the BIOS made the freezes go away.
+
+## Experiments
+The recipe is well known, so I'll first show that it works on the real robot, then break down which piece makes it work, and to what extent. For the second part I started from stock Ubuntu and turned the settings on one at a time, rebooting between each, measuring the machine with a fake control box.
+
+### Does It Work?
+To check that the setup works at all, I ran DROID's normal control stack on the FR3 from this single PC, once on stock Ubuntu settings and once with the full setup, and recorded how long the robot ran before a controller dropout.
+
+In both runs, the PC was doing what it would during a real rollout: running a 3B-parameter π0.5 policy<Cite n={11} /> on the GPU and streaming three ZED cameras, with no artificial stress load on top. Polymetis's 1 kHz control thread runs at `SCHED_FIFO` priority 80 with its memory locked (`mlockall`), inside a container restricted to the isolated cores 10–13. The policy and camera container is restricted to cores 0–6.
+
+On the robot, when a certain amount of consecutive packets are missed, Polymetis catches the libfranka error and automatically recovers after a short wait (a second or two), which trips its own watchdog and kills the running controller. DROID then restarts it. Observing from the outside, the robot stutters and moves a lot slower than it should. The experiment counts controller restarts.
+
+<RobotDropouts />
+
+On stock settings, the first dropout came within seconds, and after that the robot dropped out every second or two for as long as I let it run. With the full setup, it ran for six minutes without a single dropout. At the stock rate that would have been a couple of hundred. Zero events in six minutes doesn't prove the rate is zero, but it does put it at no more than about one per two minutes with 95% confidence<Cite n={12} />, and in practice I've run the full setup for much longer without problems.
+
+So it works. The next question I want to ask is how each setting contributes to the result.
+
+### Fake Control Box Results
+#### Setup
+To separate the settings, I built a fake control box so I could stress the machine and measure it without risking the real robot every few seconds. The fake control box sends a state packet every millisecond over a virtual network link, and a responder (standing in for the real controller) does a bit of busywork and replies. The responder always runs on CPU 12, one of the four cores the settings set aside for realtime work. I'll call those four cores the *isolated cores* and the rest the *housekeeping cores*. In my setup, cores 0–9 are housekeeping cores and 10–13 are isolated cores.
+
+To make life hard for CPU 12, every run has the same background load from `stress-ng`<Cite n={13} />: CPU number crunching on every core, plus memory, disk, process-creation, socket and timer stress, emulating the kernel-heavy activities that are most likely to cause the freezes. The load isn't pinned anywhere, so the only thing that can keep it off CPU 12 is the settings themselves.
+
+I measured CPU 12 with two standard kernel tools, `rtla timerlat`<Cite n={14} /> and `rtla osnoise`<Cite n={15} />:
+
+- **Wake-up latency.** A timer fires, and we measure how long until our thread is actually running. This is the "can this core respond to me right away" number. The worst case is reported. Lower is better.
+- **Noise.** A busy loop runs at the control loop's priority, and the kernel adds up every microsecond something else takes the core away from it, and records who took it (a timer tick, a device interrupt, an RCU callback, another thread). Basically, this measures *why* the system isn't able to respond immediately. Lower is better.
+
+A note on order: the settings depend on each other, so they can't all be tested independently. `nohz_full` only works on a core that's already isolated, so it has to come after `isolcpus`. And `nohz_full` quietly turns on a fourth setting, `rcu_nocbs`, which moves RCU cleanup work (callbacks the kernel runs after data structures are safe to free) off the isolated cores. To see what `rcu_nocbs` does on its own, it has to be added *before* `nohz_full`. Hyperthreading I left off throughout, since turning it on caused freezes on the real robot even with the full setup; I didn't measure it with the tools above.
+
+#### Adding one setting at a time
+
+<BuildUp />
+
+To see what was causing the noise, here is everything that interrupted CPU 12 during the fake control box runs:
+
+<InterruptSources />
+
+Breaking down each step:
+
+- **`isolcpus` fixes latency.** It's the single biggest change: once nothing else is allowed to be scheduled on CPU 12, the worst-case wake-up drops by two orders of magnitude. The rescheduling interrupts and SSD interrupts (which follow the stress processes around) disappear with it. What's left is mostly the timer tick, still firing about a thousand times a second.
+- **`rcu_nocbs` did nothing measurable here.** It moves RCU callbacks off the core, but our control loop barely generates any, so there was nothing to move. The RCU softirq count stays the same because the tick still triggers RCU's bookkeeping every millisecond; only the callbacks themselves move. (The noise going up is run-to-run variation in what's left, which is still dominated by the tick.) In production you don't need to set it separately anyway, since `nohz_full` turns it on.
+- **`nohz_full` fixes noise.** Turning off the tick removes the thousand-a-second timer interrupts *and* the RCU softirqs they were driving, and total noise drops by about fifty times. The wake-up max going up slightly here is not a regression: worst-case numbers from a single 60 s run vary a lot between runs, and `nohz_full` does add a small amount of bookkeeping each time the core enters the kernel. Look at the noise column for what this step is for.
+- **`irqaffinity` removes the stragglers.** With the tick gone, the remaining noise was mostly a network card queue that happened to be assigned to CPU 12. Steering device interrupts to the housekeeping cores removes it, leaving essentially nothing.
+
+#### Two "can I skip it?" checks
+Here are two more experiments testing if certain settings can be dropped.
+
+**Can I skip `isolcpus` and just steer interrupts away?** No.
+
+<SkipIsolcpus />
+
+Without isolation, the stress processes and their rescheduling and SSD interrupts are back on CPU 12, and the result is no better than stock. (`nohz_full` has to go too, since it means nothing without isolation.)
+
+**If I steer interrupts, do I still need `nohz_full`?** Yes. Before running this one I wrote down what the build-up predicted: `irqaffinity` only removes device interrupts, so the tick and RCU softirqs should still be there and noise should stay in the thousands.
+
+<SkipNohz />
+
+The two settings remove different sources of noise, and they don't overlap.
+
+#### What about the preemption model?
+The stock kernel can switch between voluntary and full preemption at runtime, so I tested both with and without isolation. Here "missed replies" are replies that didn't make it before the next packet, out of 180,000.
+
+<PreemptionModel />
+
+Full preemption made no difference to the isolated core, which makes sense: nothing on it needs preempting. Where it did matter was the fake control box itself, which runs on a housekeeping core alongside the stress load. In voluntary mode it regularly sent its packets late because it couldn't get back on its core quickly. That's a property of my fake control box, not of the real one, but it's a useful lesson: full preemption helps realtime threads you *haven't* isolated.
+
+
+## Conclusion and Limitations
+Setting up the infrastructure properly around the robot is vital. Good policies are only as good as the infrastructure implementing the outputted actions. A freeze on a normal pick-and-place task probably isn't fatal, but as these robots proliferate and start to interact with people and objects outside the lab, getting the infrastructure right is crucial. Code for the fake control box will be posted here soon for reproduction.
+
+A limitation of these experiments is the lack of hardware diversity. This is only verified on one device configuration, and CPUs with a lower frequency or fewer cores may not be as viable. So on a different CPU, YMMV. Future work would involve experiments on different types of CPUs. 
+
+## Future Research
+
+After exploring a system that could have network dropouts, an open-ended question that I think would be interesting to pursue: 
+
+> **Can a policy notice its execution is degrading and respond safely?**
+  - Policies are increasingly moving to a cloud-based inference solution, such as π0.7<Cite n={16} />, Google's Gemini Robotics 2<Cite n={17} />, and even GPT-6 Astra<Cite n={18} />. Current dropouts are invisible to the policy, as they only take in the physical state of the robot (i.e. joint position, Cartesian velocity, etc.), but they don't have any other information. They do not know anything about the status of the network, the harness orchestrating the actions generated by the models (although some models are able to store memories of past states and actions), or if there are hardware failures, like joint degradation or actuator failure. Furthermore, a possible direction the robot learning field is taking is to have a small and local corrective policy<Cite n={19} /><Cite n={20} />. The larger, cloud-based models are not aware of these either. If, hypothetically, the harness degrades or the smaller model presents poor corrective behavior, can the policy notice it and make corrective steps in a safe manner? Concretely, I'd want to give the policy signals like commanded vs. measured torque and the control command success rate that libfranka already reports<Cite n={6} />.
+  - If someone is working on this I'd love to learn more about the research being done here :D
+
+<Appendix>
+
+### A: Setup Details
+| | |
+|---|---|
+| CPU | Xeon w5-2555X, 14 cores, hyperthreading off in BIOS |
+| Kernel | Ubuntu stock 6.14.0-37-generic, `PREEMPT_DYNAMIC` (voluntary), HZ=1000 |
+| Isolated cores | 10–13 (control loop on CPU 12) |
+| Housekeeping cores | 0–9 |
+| Held constant in every run | C-states off, performance governor, swap off, RT throttling off |
+| Per configuration | 3 × 60 s fake control box runs, 60 s wake-up latency test, 30 s noise test |
+
+### B: Full Results
+Every run, including repeats and the one taken with the DROID stack still running. The charts in the main text use the first stock run and the clean full-setup run. The machine and constants are in Appendix A; the only things that change between rows are the boot settings and the preemption model.
+
+#### Real robot
+
+Stock Ubuntu, one row per dropout. Trial 1 started from a clean controller start; each later trial started right after the previous dropout had recovered. Each dropout was logged as `[CTRL] is_running_policy()=False -> restarting cartesian impedance`.
+
+| Trial | Time to dropout (s) |
+|---|---|
+| 1 | 12.2 |
+| 2 | 1.9 |
+| 3 | 1.2 |
+| 4 | 0.4 |
+| 5 | 1.1 |
+| 6 | 1.2 |
+| 7 | 2.0 |
+| 8 | 1.2 |
+
+Full setup:
+
+| Container log window (UTC) | Policy timesteps | Controller dropouts |
+|---|---|---|
+| 05:40:17 – 05:47:56 | ~5,000 (~6 min of motion) | 0 |
+
+#### Fake control box: control loop turnaround
+3 × 60 s runs pooled per row. A miss is a reply that didn't arrive before the next packet. "Fake box late" cycles are excluded from scoring, since a real control box's clock never slips. Turnaround is in µs.
+
+| Configuration | Preemption | Date | Note | Cycles scored | Misses | Misses (ppm) | Longest miss streak | p50 | p99 | p99.9 | Max | Fake box late |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Stock Ubuntu | voluntary | 2026-10-01 11:28 | run 1 | 177,193 | 3 | 16.9 | 1 | 116 | 184 | 678 | 4,316 | 2,807 |
+| Stock Ubuntu | voluntary | 2026-10-01 11:34 | run 2 | 177,040 | 11 | 62.1 | 5 | 115 | 247 | 690 | 4,002 | 2,960 |
+| Stock Ubuntu | full | 2026-10-01 11:40 |  | 179,998 | 4 | 22.2 | 1 | 115 | 134 | 189 | 1,208 | 2 |
+| `isolcpus` | voluntary | 2026-10-01 11:48 |  | 176,968 | 9 | 50.9 | 2 | 114 | 270 | 653 | 4,345 | 3,032 |
+| `isolcpus` | full | 2026-10-01 11:55 |  | 179,998 | 0 | 0.0 | 0 | 114 | 132 | 286 | 346 | 2 |
+| `isolcpus` + `rcu_nocbs` | voluntary | 2026-10-01 13:01 |  | 177,612 | 1 | 5.6 | 1 | 114 | 137 | 631 | 4,996 | 2,388 |
+| `isolcpus` + `nohz_full` + `rcu_nocbs` | voluntary | 2026-10-01 13:09 |  | 177,518 | 9 | 50.7 | 2 | 116 | 214 | 650 | 4,694 | 2,482 |
+| Full setup | voluntary | 2026-09-25 06:06 |  | 178,362 | 0 | 0.0 | 0 | 116 | 140 | 655 | 3,654 | 1,638 |
+| Full setup | voluntary | 2026-09-25 05:57 | DROID Docker stack running | 179,415 | 0 | 0.0 | 0 | 116 | 131 | 451 | 895 | 585 |
+| Full setup minus `nohz_full` | voluntary | 2026-10-01 13:40 |  | 177,256 | 10 | 56.4 | 2 | 114 | 135 | 656 | 4,807 | 2,744 |
+| Full setup minus `isolcpus` (and `nohz_full`) | voluntary | 2026-10-01 13:20 |  | 176,884 | 21 | 118.7 | 6 | 116 | 263 | 687 | 4,516 | 3,116 |
+
+#### Fake control box: wake-up latency and noise on CPU 12
+Wake-up latency: `rtla timerlat`, 60 s, thread at SCHED_FIFO 80, µs. Noise: `rtla osnoise`, SCHED_FIFO 80 busy loop for 900 ms of every 1 s period, 26.1 s of measurement. The interrupt, softirq and thread columns are counts of interruptions by source.
+
+| Configuration | Preemption | Date | Note | Wake-up p99 | Wake-up p99.9 | Wake-up max | Total noise (µs) | Longest single interruption (µs) | CPU available (%) | IRQ interruptions | Softirq interruptions | Thread interruptions |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| Stock Ubuntu | voluntary | 2026-10-01 11:28 | run 1 | 5 | 184 | 771 | 16,626 | 117 | 99.93629 | 28,075 | 10,026 | 8 |
+| Stock Ubuntu | voluntary | 2026-10-01 11:34 | run 2 | 10 | 161 | 1,070 | 14,859 | 54 | 99.94306 | 27,678 | 9,607 | 7 |
+| Stock Ubuntu | full | 2026-10-01 11:40 |  | 5 | 86 | 1,653 | 17,482 | 370 | 99.93301 | 27,522 | 9,488 | 7 |
+| `isolcpus` | voluntary | 2026-10-01 11:48 |  | 2 | 2 | 7 | 6,765 | 13 | 99.97408 | 26,106 | 8,872 | 0 |
+| `isolcpus` | full | 2026-10-01 11:55 |  | 2 | 2 | 7 | 5,842 | 38 | 99.97761 | 26,116 | 8,533 | 7 |
+| `isolcpus` + `rcu_nocbs` | voluntary | 2026-10-01 13:01 |  | 2 | 3 | 8 | 10,137 | 27 | 99.96116 | 26,119 | 9,426 | 7 |
+| `isolcpus` + `nohz_full` + `rcu_nocbs` | voluntary | 2026-10-01 13:09 |  | 3 | 4 | 14 | 130 | 35 | 99.99950 | 22 | 15 | 0 |
+| Full setup | voluntary | 2026-09-25 06:06 |  | 3 | 3 | 8 | 6 | 2 | 99.99997 | 2 | 0 | 0 |
+| Full setup | voluntary | 2026-09-25 05:57 | DROID Docker stack running | 2 | 3 | 9 | 657 | 12 | 99.99748 | 241 | 179 | 0 |
+| Full setup minus `nohz_full` | voluntary | 2026-10-01 13:40 |  | 2 | 2 | 7 | 7,867 | 12 | 99.96985 | 26,111 | 10,201 | 7 |
+| Full setup minus `isolcpus` (and `nohz_full`) | voluntary | 2026-10-01 13:20 |  | 20 | 232 | 1,285 | 19,163 | 182 | 99.92657 | 28,150 | 11,338 | 7 |
+
+#### Fake control box: what landed on CPU 12
+From `/proc/interrupts` and `/proc/softirqs`, over the 180 s of fake control box runs, per second. Top sources are the three biggest hardware interrupt lines.
+
+| Configuration | Preemption | Date | Note | Hardware interrupts / s | Timer softirqs / s | RCU softirqs / s | Top sources (count over 180 s) |
+|---|---|---|---|---|---|---|---|
+| Stock Ubuntu | voluntary | 2026-10-01 11:28 | run 1 | 2,371 | 40 | 564 | rescheduling IPI 196,118; timer tick 182,842; NVMe SSD queue 41,999 |
+| Stock Ubuntu | voluntary | 2026-10-01 11:34 | run 2 | 2,520 | 38 | 619 | rescheduling IPI 198,900; timer tick 182,581; NVMe SSD queue 66,072 |
+| Stock Ubuntu | full | 2026-10-01 11:40 |  | 2,380 | 26 | 581 | rescheduling IPI 193,720; timer tick 182,605; NVMe SSD queue 47,175 |
+| `isolcpus` | voluntary | 2026-10-01 11:48 |  | 997 | 0.49 | 458 | timer tick 179,108; function-call IPI 177; NIC eno2np1 queue 84 |
+| `isolcpus` | full | 2026-10-01 11:55 |  | 996 | 0.27 | 467 | timer tick 179,078; NIC eno2np1 queue 132; function-call IPI 119 |
+| `isolcpus` + `rcu_nocbs` | voluntary | 2026-10-01 13:01 |  | 999 | 0.78 | 469 | timer tick 179,309; NIC eno2np1 queue 454; function-call IPI 138 |
+| `isolcpus` + `nohz_full` + `rcu_nocbs` | voluntary | 2026-10-01 13:09 |  | 12 | 1.11 | 1.11 | NIC eno2np1 queue 1,313; function-call IPI 475; timer tick 224 |
+| Full setup | voluntary | 2026-09-25 06:06 |  | 1.06 | 0.07 | 0.05 | function-call IPI 159; IRQ work 15; timer tick 13 |
+| Full setup | voluntary | 2026-09-25 05:57 | DROID Docker stack running | 11 | 3.12 | 0 | NIC eno3np0 queue 739; IRQ work 564; timer tick 563 |
+| Full setup minus `nohz_full` | voluntary | 2026-10-01 13:40 |  | 1,026 | 0.07 | 469 | timer tick 184,398; function-call IPI 324; perf monitoring 2 |
+| Full setup minus `isolcpus` (and `nohz_full`) | voluntary | 2026-10-01 13:20 |  | 2,702 | 29 | 558 | rescheduling IPI 208,276; timer tick 183,302; NVMe SSD queue 84,092 |
+
+</Appendix>
+
+<References items={[
+    {
+        authors: 'A. Khazatsky, K. Pertsch, S. Nair, A. Balakrishna, S. Dasari, S. Karamcheti, S. Nasiriany, M. K. Srirama, L. Y. Chen, K. Ellis, et al.',
+        title: 'DROID: A Large-Scale In-The-Wild Robot Manipulation Dataset',
+        venue: 'Robotics: Science and Systems (RSS), 2024',
+        url: 'https://arxiv.org/abs/2403.12945',
+    },
+    {
+        authors: 'DROID Team',
+        title: 'DROID Hardware and Software Setup Guide',
+        venue: 'droid-dataset.github.io (accessed 2026-10-02)',
+        url: 'https://droid-dataset.github.io/droid/',
+    },
+    {
+        authors: 'F. Weisbecker',
+        title: 'CPU Isolation – Introduction – by SUSE Labs (part 1)',
+        venue: 'SUSE Communities, December 2022',
+        url: 'https://www.suse.com/c/cpu-isolation-introduction-part-1/',
+    },
+    {
+        authors: 'J. Corbet',
+        title: 'Clockevents and dyntick',
+        venue: 'LWN.net, February 2007',
+        url: 'https://lwn.net/Articles/223185/',
+    },
+    {
+        authors: 'Y. Lin, A. S. Wang, G. Sutanto, et al.',
+        title: 'Polymetis',
+        venue: 'Facebook AI Research, 2021',
+        url: 'https://facebookresearch.github.io/fairo/polymetis/',
+    },
+    {
+        authors: 'Franka Robotics GmbH',
+        title: 'Minimum System and Network Requirements',
+        venue: 'Franka Control Interface (FCI) Documentation (accessed 2026-10-02)',
+        url: 'https://frankarobotics.github.io/docs/doc/libfranka/docs/system_requirements.html',
+    },
+    {
+        authors: 'Franka Robotics GmbH',
+        title: 'Setting up the Real-Time Kernel',
+        venue: 'Franka Control Interface (FCI) Documentation (accessed 2026-10-02)',
+        url: 'https://frankarobotics.github.io/docs/doc/libfranka/docs/real_time_kernel.html',
+    },
+    {
+        authors: 'The Linux Kernel Documentation',
+        title: 'Real-time preemption',
+        venue: 'docs.kernel.org (accessed 2026-10-02)',
+        url: 'https://docs.kernel.org/core-api/real-time/index.html',
+    },
+    {
+        authors: 'The Linux Kernel Documentation',
+        title: 'The kernel\'s command-line parameters (isolcpus, irqaffinity, nohz_full, rcu_nocbs)',
+        venue: 'docs.kernel.org (accessed 2026-10-02)',
+        url: 'https://docs.kernel.org/admin-guide/kernel-parameters.html',
+    },
+    {
+        authors: 'The Linux Kernel Documentation',
+        title: 'NO_HZ: Reducing Scheduling-Clock Ticks',
+        venue: 'docs.kernel.org (accessed 2026-10-02)',
+        url: 'https://docs.kernel.org/timers/no_hz.html',
+    },
+    {
+        authors: 'Physical Intelligence',
+        title: 'π0.5: a Vision-Language-Action Model with Open-World Generalization',
+        venue: 'arXiv:2504.16054',
+        url: 'https://arxiv.org/abs/2504.16054',
+    },
+    {
+        authors: 'J. A. Hanley and A. Lippman-Hand',
+        title: 'If Nothing Goes Wrong, Is Everything All Right? Interpreting Zero Numerators',
+        venue: 'JAMA 249(13):1743–1745, 1983',
+        url: 'https://doi.org/10.1001/jama.1983.03330370053031',
+    },
+    {
+        authors: 'C. I. King',
+        title: 'stress-ng: a tool to load and stress a computer system',
+        venue: 'GitHub',
+        url: 'https://github.com/ColinIanKing/stress-ng',
+    },
+    {
+        authors: 'The Linux Kernel Documentation',
+        title: 'rtla-timerlat: Measures the operating system timer latency',
+        venue: 'docs.kernel.org (accessed 2026-10-02)',
+        url: 'https://docs.kernel.org/tools/rtla/rtla-timerlat.html',
+    },
+    {
+        authors: 'The Linux Kernel Documentation',
+        title: 'rtla-osnoise: Measure the operating system noise',
+        venue: 'docs.kernel.org (accessed 2026-10-02)',
+        url: 'https://docs.kernel.org/tools/rtla/rtla-osnoise.html',
+    },
+    {
+        authors: 'Physical Intelligence',
+        title: 'π0.7: a Steerable Generalist Robotic Foundation Model with Emergent Capabilities',
+        venue: 'April 2026',
+        url: 'https://www.pi.website/blog/pi07',
+    },
+    {
+        authors: 'C. Parada (Google DeepMind)',
+        title: 'Gemini Robotics 2 brings whole body intelligence to robots',
+        venue: 'Google DeepMind Blog, July 2026',
+        url: 'https://deepmind.google/blog/gemini-robotics-2-brings-whole-body-intelligence-to-robots/',
+    },
+    {
+        authors: 'W. Zhang, K. Wang, Y. Ouyang, X. Huang, L. Li, K. Su, W. Jin, W. Chai, H. Liang, Z. Dou, Y. Chen, and T. Chen',
+        title: 'An Unexpected Robot Policy: Early Evaluations of GPT-6 Astra on RoboDojo and Beyond',
+        venue: 'arXiv:2609.24170',
+        url: 'https://arxiv.org/abs/2609.24170',
+    },
+    {
+        authors: 'C. Xu, J. T. Springenberg, M. Equi, A. Amin, A. Esmail, S. Levine, and L. Ke',
+        title: 'RL Token: Bootstrapping Online RL with Vision-Language-Action Models',
+        venue: 'Physical Intelligence, March 2026',
+        url: 'https://www.pi.website/research/rlt',
+    },
+    {
+        authors: 'P. Dong, K.-H. Hung, D. Sadigh, and C. Finn',
+        title: 'Reinforcement Learning for Real-Time Vision-Language-Action Policies',
+        venue: 'arXiv:2609.18207',
+        url: 'https://arxiv.org/abs/2609.18207',
+    },
+]} />
+
+[Back to all posts](/blog)

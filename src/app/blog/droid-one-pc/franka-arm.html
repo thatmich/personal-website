@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Franka Research 3: two PCs into one</title>
+<style>
+html, body { margin: 0; height: 100%; background: #000000; }
+body { display: grid; place-items: center; }
+svg { width: min(100vw, 1000px); height: auto; display: block; }
+</style>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" id="franka-arm" viewBox="0 0 1000 747" width="1000" height="747">
+<!-- Arm derived from franka_description (c) Franka Robotics GmbH, Apache License 2.0. Gripper derived from robotiq_description (c) PickNik Robotics, BSD 3-Clause. -->
+<style>
+#franka-arm .sil,#franka-arm .det,#franka-arm .acc{vector-effect:non-scaling-stroke;stroke-linecap:round;stroke-linejoin:round}
+#franka-arm{--k:1}
+@media (max-width:700px){#franka-arm{--k:.62}}
+#franka-arm .sil{fill:#000000;stroke:#FFFFFF;stroke-width:calc(var(--k)*1.7px);fill-rule:evenodd}
+#franka-arm .det{fill:none;stroke:#FFFFFF;stroke-width:calc(var(--k)*0.55px)}
+#franka-arm .sil.fine{stroke-width:calc(var(--k)*0.95px)}
+#franka-arm .det.fine{stroke-width:calc(var(--k)*0.45px)}
+#franka-arm .acc{fill:none;stroke:#FF6A00;stroke-width:calc(var(--k)*2.0px)}
+#franka-arm #arm-light{stroke:#FFFFFF;transition:fill .2s,stroke .2s,filter .2s}
+#franka-arm:hover #arm-light{fill:#FF3B30;stroke:#FF3B30;filter:drop-shadow(0 0 5px #FF3B30)}
+</style>
+<rect id="bg" width="1000" height="747" fill="#000000"/>
+<path id="ground" class="det" d="M0,721.5H1000"/>
+<g id="scene">
+<g id="pcA">
+<rect class="sil" x="156.3" y="440.2" width="156.2" height="281.2" rx="3"/>
+<circle class="det" cx="182.8" cy="563.7" r="8.6"/>
+<path class="det" d="M170.3,454.3h128.1v35.2h-128.1ZM170.3,498.8h128.1v35.2h-128.1ZM170.3,707.4v-20.3M178.9,707.4v-20.3M187.5,707.4v-20.3M196.1,707.4v-20.3M204.7,707.4v-20.3M213.3,707.4v-20.3M221.9,707.4v-20.3M230.5,707.4v-20.3M239.1,707.4v-20.3"/>
+<circle class="acc" id="pcA-led" cx="182.8" cy="590.2" r="5.1"/>
+</g>
+<g id="pcB">
+<path class="sil" d="M404.7,643.4v-22.6q0,-4 4,-4h26.4q4,0 4,4v22.6"/>
+<rect class="sil" x="343.8" y="643.4" width="156.2" height="78.1" rx="3"/>
+<path class="det" d="M357.8,670.7h54.7v23.4h-54.7ZM485.9,672.3v20.3M478.9,672.3v20.3M471.9,672.3v20.3M464.8,672.3v20.3M457.8,672.3v20.3M450.8,672.3v20.3"/>
+<circle class="acc" id="pcB-led" cx="435.9" cy="682.4" r="5.1"/>
+</g>
+<g id="pcMerged" opacity="0">
+<rect class="sil" x="156.3" y="362.1" width="156.2" height="359.4" rx="3"/>
+<circle class="det" cx="182.8" cy="485.6" r="8.6"/>
+<path class="det" d="M170.3,376.2h128.1v35.2h-128.1ZM170.3,420.7h128.1v35.2h-128.1ZM170.3,707.4v-20.3M178.9,707.4v-20.3M187.5,707.4v-20.3M196.1,707.4v-20.3M204.7,707.4v-20.3M213.3,707.4v-20.3M221.9,707.4v-20.3M230.5,707.4v-20.3M239.1,707.4v-20.3"/>
+<circle class="acc" id="pcMerged-led" cx="182.8" cy="512.1" r="5.1"/>
+</g>
+<path id="seam" class="acc" opacity="0" d="M156.3,440.2h156.2"/>
+</g>
+<g id="arm">
+  <g id="link0">
+    <g id="link1" data-pivot="718.75,461.34">
+      <path class="sil" d="M675.8,461.3L675.8,611.3L761.7,611.3L761.7,461.3L760.4,450.8L756.6,441L752.6,434.9L748,429.9L742.6,425.6L736.8,422.3L730.1,419.9L722.8,418.6L714.7,418.6L707.4,419.9L700.4,422.5L694.1,426.2L688.4,431L683.6,436.6L679.9,443L677.5,449.1Z"/>
+      <path class="det" d="M677.2,472.2L680.6,481.1"/>
+      <g id="link2" data-pivot="718.75,461.34">
+        <g id="link3" data-pivot="893.32,286.77">
+          <path class="sil" d="M796.1,323.2L856.9,384L865.7,374.7L882.2,355L896.8,333.9L898.6,330.6L900.5,323.4L900,315.9L898.6,310.7L894,301.1L884.1,289L880.5,282.6L885.7,263.6L890.9,249L891.7,242.6L890.9,231.5L889.4,226.1L884.5,216.2L877.1,207.8L872.7,204.4L862.8,199.5L857.4,198L846.3,197.2L840.7,197.9L830.2,201.4L825.3,204.1L818.4,209.7L813.4,215.7L808.4,225.6L806.8,231L806,236.5L806.5,247.6L809.9,258.2L817.8,270.5L824.1,282.5L824,285.9L822,293.1L818.3,299.6L810.1,309.4Z"/>
+          <path class="det" d="M814.6,217L812.8,220L811.8,221.8L814.6,217M814.6,217L818.1,212.6L816.4,214.7L814.6,217M820.9,268.1L822.5,270.1L824.2,272.1L820.9,268.1M843.6,291.1L834.7,287.9L833.2,288.4M855.1,296.7L846.5,296.9L839.5,295.7M860,291L849.1,292.2M860.6,295.5L863.4,294.7L866.1,293.8L860.6,295.5M865,288.8L873.9,283.6M873.9,283.6L870.6,286.7L865.9,289.1M889,230.1L888.2,227.4L887.3,224.7L889,230.1M890,235.6L890,244.7M809.6,226.8L811.7,221.7L809.6,226.8M820.2,264.2L824.2,269.6L821.5,266L820.2,264.2M822.3,240.6L823.8,231.3L828.4,223.2L833,218.9L838.4,215.8L847.5,213.7L856.8,214.8L862.5,217.4L867.3,221.1L870.6,225L873.4,230.3L875.3,239.5L873.7,249.2L871.5,253.9L867.6,258.9L861.9,263.2L857.5,265.1L848.2,266.6L839.1,264.8L833.9,262L830.1,258.9L827.1,255.2L824.1,249.7L822.3,240.6M853.4,281.7L857.2,281.1L858.9,280.8L857.2,281.1L853.4,281.7M862.6,317.5L867.5,312.6L864.9,315.2L862.6,317.5M867.4,262.2L869.2,260.3L871.3,258.1L867.4,262.2M878,210.9L879.4,212.5L881.7,215.1L878,210.9"/>
+          <g id="link4" data-pivot="847.74,241.19">
+            <g id="link5" data-pivot="547.74,176.74">
+              <path class="sil" d="M508.5,163.2L506.5,171.3L506.1,178.5L507.4,186.6L510.8,195.3L515.1,201.7L520.9,207.4L528,212L536.5,215L547.4,216L556.7,214.5L565.1,211.4L580.6,204.2L590.2,202L601.2,201.1L645.8,201L658.2,202L668.7,204L696.6,213.2L711.4,216.4L731,219L750.1,219.7L750.1,133.9L731,134.5L711.4,137.1L696.7,140.2L668.7,149.5L658.3,151.5L645.9,152.5L601.2,152.4L590.2,151.5L580.1,149.1L557.7,139.3L549.5,137.6L541.6,137.6L530.4,140.4L520.6,146.3L513.9,153.3Z"/>
+              <path class="det" d="M526.1,178.6L526.7,171L528.9,165.3M532.5,193.2L540,198.6M543.1,153.7L550,152.7L558.2,153.7L581.7,161.8M558.5,199.7L550,200.8L543.7,199.9M554.9,200.5L562.5,198.7L576.1,193.7M555.4,153.1L562.6,154.8L577.8,160.4M645.6,188.5L620.3,188.5M620.1,188.5L596,188.9M588.6,189.8L558.5,199.7M564.5,153.6L565.4,153.9L570.1,155.6L564.5,153.6M585.4,161.4L576.5,158.3M591.7,164.2L593.5,164.7L601.1,173.1M592.7,164.4L600.4,172.7M645.6,188.2L620.3,188.5M617.2,188.5L597.1,188.8M663.7,173.5L602.2,173.4M602.2,173.4L663.6,173.5M612.8,163.9L602.9,163.8M654.9,164.4L632.4,164.1M633.4,172.5L663.6,172.5M645.6,188.2L670.2,187.1L677.9,185.9L683.2,183.9M645.7,188.2L654.9,188.1M645.7,188.2L654.9,188.1M645.6,188.5L617.2,188.5M620.1,188.5L645.6,188.2M654.6,200L692.5,199.9L700.9,197.5L705.9,193.8L709.6,188.8L711.8,182.9L712.5,176.7L712,171.4L710.3,166.1L707.6,161.6L705.3,159.1L700.2,155.7M659.3,187.9L662.9,187.7L657.2,188M654.8,199.4L654.8,199.4L646.4,199.5L654.8,199.4M659.4,199.4L668.9,199.1M659.4,199.4L668.9,199.1M664.1,154.3L673.3,154.7M699.8,155.5L690.7,153.4M690.7,153.4L666.1,153.3M666.3,152.4L691.6,152.7M691.6,152.7L698.7,154.3L702.1,156L705.5,158.4L710.2,164.6L712.6,171.6L713,176.7L712.6,181.8L710.2,188.9L705.2,195.2L701.2,197.9L694.9,200.3L684.1,201.2L666.3,201.1M671.3,166.6L681.5,168.7L684,170.3L685.5,173.5M692.5,196.2L681.3,198.3M687.1,156.1L691.7,157.1L689.4,156.6L687.1,156.1M563.5,153.5L570.1,155.8L566.8,154.7L563.5,153.5M563.7,199.9L566.9,198.7L570.2,197.6L563.7,199.9M687.1,197.4L690.2,196.7L691.7,196.4L687.1,197.4"/>
+              <g id="link6" data-pivot="547.74,176.74">
+                <path class="sil" d="M444.6,216.7L513.3,216.7L513.4,212.4L514.2,210.4L516.5,208.2L519.5,207.4L526.3,208L535.1,211.9L541.3,213.5L547.3,214.1L553.4,213.7L559.9,212.1L565.6,209.6L570.9,206.1L575.5,201.8L581.9,192L584.1,185.2L585.1,176.7L584,167.7L582,161.8L579.1,156.4L575.3,151.5L570.7,147.3L565.5,143.9L538.7,133.9L528.1,129.1L512.8,120.3L505.2,114L501.5,113L494.7,112.8L462.6,119L455.2,123.8L450.6,128.9L448.5,133.5L446.9,140.8L445.1,159.8L444.6,180.6L447.7,199.1Z"/>
+                <path class="det" d="M503.2,115L475.7,120.3M467.3,122L459.1,123.7L455.2,125.6M491.1,115.7L466.6,120.4M476.4,126.3L466.2,128.2M475.7,120.3L491.6,117.2M466.7,121.8L487.9,117.8M545.7,139.4L539.5,140.3L533.5,142.2L527.9,145.1L522.9,148.8L518.5,153.4L515,158.6L512.5,164.4L510.9,170.5L510.4,176.7"/>
+                <g id="link7" data-pivot="478.99,176.74">
+                  <path class="sil" d="M415.5,244.8L416.5,251.6L419,253.7L454.2,254.2L454.4,259.4L455.2,260.2L502.8,260.2L503.6,259.4L503.5,254L504.2,253.2L512.1,253.1L513.3,251.9L513.3,217.5L444.8,217.4L444.5,225.7L440.9,226.6L418.8,237.2L416.1,240.2Z"/>
+                  <path class="det" d="M419.9,252.3L437.4,252.3M432,233.8L423.5,237.4M436.7,240.1L436,249.7L435.1,251.5L433.5,252.2M422.1,251.1L421.1,248L421,243.1L422.7,237.8M422.7,237.8L433,233.3M436.5,240.1L435.3,250.8M511.9,221.9L446.1,221.9M446.3,235.3L511.9,235.3M502.1,253.9L455.8,253.9M488.8,253.2L469.2,253.2M464.5,253.2L455.2,253.2M470.8,252.8L487.2,252.8M486.3,222.2L495.5,222.2M496.7,222.1L511.9,222.1M496.9,249.2L495.3,247.6L495.3,240.4L496.8,239.1M496.9,249.2L495.4,247.6L495.4,240.4L496.9,239.1M499.6,222.2L511.9,222.2M503.2,248.3L500.8,246.9L499.8,243.8L500.8,240.6L503.2,239.3M503.4,248.2L501.3,246.9L500.4,243.8L501.3,240.6L503.4,239.3"/>
+                  <g id="hand">
+                    <path class="sil fine" d="M445.9,304.7L447.3,308.5L459.9,325.8L464.2,329.5L468.4,330.6L472.8,330.6L479,329.1L485.2,330.6L489.6,330.6L495,328.8L498.1,325.8L510.3,308.9L512,304.8L511.7,300.6L508.3,292.4L508.3,262.8L506.8,262.7L506.7,260.7L504.5,260.3L504.2,258.1L503.3,257.7L501.4,258.1L501,260.3L451.6,260.3L451.2,262.6L449.7,262.8L449.7,292.4L446.3,300.4Z"/>
+                    <path class="det fine" d="M454.2,286.8L461.8,288.8L459.4,291.9M457.2,289.6L456.8,292.1L455.8,292.9L453.2,293.1L451.5,291.2L451.9,288.8L453,287.7L455.6,287.6L457.2,289.6M479,261.8L461.6,261.8M469.4,327.5L488.6,327.5M467,322.4L467.1,323.8L465.6,325.8L462.9,325.9L461.3,324.1L461.6,321.7L462.8,320.6L465.3,320.5L467,322.4M469.6,310.4L467.1,309.2L467.2,307.2L468.5,306.2L470.1,306.5L471.1,307.8L470.1,310.2M491.6,261.8L479,261.8M489.4,310.4L487,309.2L487.1,307.2L488.4,306.2L490,306.5L491,307.8L490,310.2M496.7,322.4L496.2,325L495.2,325.8L492.6,325.9L491,324.1L491.3,321.7L492.4,320.6L495,320.5L496.7,322.4M498.2,291.5L496.2,288.8L503.8,286.8M500.1,274.7L503.9,274.7L504,286.8M500.7,289.8L502.2,287.7L503.7,287.4L505.9,288.4L506.6,290.4L506,292.1L503.7,293.3L501.4,292.3L500.7,289.8"/>
+                    <g id="inner-knuckle-left" data-pivot="469.07,308.32">
+                      <path class="sil fine" d="M435.4,342.1L436.3,345L438.5,346.7L440.9,346.8L443.6,345.3L472.6,311.4L473.8,308.2L472.5,305.2L469.5,303.7L467.3,304L465.5,305.3L436.5,339.2Z"/>
+                      <path class="det fine" d="M437.9,341.8L438,343L439.6,344.4L440.8,344.3L442.2,342.8L441.8,340.9L440.1,340.1L437.9,341.8M438.1,341.9L438.8,343.7L439.7,344.2L441.9,342.7L441.6,341.1L440.1,340.3L438.1,341.9"/>
+                    </g>
+                    <g id="inner-knuckle-right" data-pivot="488.91,308.32">
+                      <path class="sil fine" d="M484.2,308.4L485.4,311.4L514.4,345.3L518.1,346.9L521.4,345.4L522.6,342.3L521.5,339.2L492.5,305.3L489.7,303.7L487.3,303.9L485.3,305.3Z"/>
+                      <path class="det fine" d="M515.8,341.8L517.2,344.3L518.3,344.4L520,343L520.1,341.8L518.8,340.2L516.9,340.3L515.8,341.8M516,341.9L517.3,344.1L519.2,343.7L519.8,342.9L518.7,340.4L517,340.5L516,341.9"/>
+                    </g>
+                    <g id="knuckle-left" data-pivot="455.08,303.23">
+                      <path class="sil fine" d="M425.8,300.4L427.5,303.9L433.6,306L434,310.6L435,311.2L443.4,306.1L449.4,306.7L454.6,309.1L457.3,308.7L459.6,307.1L461,303.2L459.4,299.2L455.6,297.3L449.6,299L434.8,297.3L429.7,295.7L426.5,297.8ZM430,303L428.4,302.1L427.7,300.2L429,298L430.9,297.6L432.5,298.5L433.2,300.3L431.9,302.6Z"/>
+                      <path class="det fine" d="M453.5,300.5L452.1,302.2L452.7,305.2L454.6,306.3L457.5,305.2M451.8,303.2L452.6,301.1L455.1,300L457.2,300.7L458.3,303.2L457.2,305.7L455.1,306.5L453,305.7L451.8,303.2M451.9,303.2L452.7,301.2L455.1,300.1L457.1,300.8L458.2,303.2L457.5,305.2L455.1,306.4L452.7,305.3L451.9,303.2M452.1,303.2L452.9,305.1L454.6,306.1L457.3,305.1L458,303.2L457.3,301.3L455.6,300.3L452.8,301.4L452.1,303.2"/>
+                      <g id="finger-left">
+                        <path class="sil fine" d="M419.7,338.4L421.1,340.5L423.6,341.6L427.6,341.6L430,339.7L430.9,335.4L429.9,328.2L431.7,314.5L433.6,312.3L440.5,307.7L441.5,305.9L441.7,303.8L440.4,301.1L432,295.9L427,295.6L424.1,298.5Z"/>
+                        <path class="det fine" d="M423.9,337.4L424.9,339L426.8,339.2L428.2,336.9L427.2,335.3L425.4,335.1L423.9,337.4M424.1,337.4L425.4,335.3L427.1,335.5L428,336.9L426.7,339L425,338.8L424.1,337.4M428.3,300.3L429.1,298.6L430.4,298.1L432.1,298.9L432.6,300.2L432.2,301.6L430.5,302.4L428.8,301.7L428.3,300.3M428.3,300.3L429.1,298.7L430.4,298.2L432.1,298.9L432.6,300.2L432.1,301.6L430.5,302.4L428.8,301.6L428.3,300.3M428.4,300.3L429.1,298.7L430.4,298.3L432,299L432.5,300.2L432.1,301.5L430.5,302.3L429.2,301.9L428.4,300.3M428.6,300.3L430.5,302.2L432.3,300.2L430.4,298.4L428.6,300.3M428.7,300.3L430.5,302.1L432.2,300.2L430.4,298.5L428.7,300.3"/>
+                        <g id="tip-left" data-pivot="426.06,337.15">
+                          <path class="sil fine" d="M422.2,334.5L421.4,337.6L422.4,340L428.7,343.2L430.2,345L431.7,354.3L439,358.5L440.5,360.2L440.9,376L441.9,376.9L445.8,377L445.8,347.3L444.7,347.1L444.2,340L441.6,337.8L426.9,332.5L424.1,332.9Z"/>
+                          <path class="det fine" d="M440.6,358L440.6,347.3M424.3,337.4L425,338.6L426.3,338.9L427.5,338.2L427.8,336.9L427.1,335.7L425.8,335.4L424.6,336.1L424.3,337.4M438.3,342.6L439,343.7L440.3,344L441.5,343.3L441.8,341.9L441.1,340.8L439.7,340.5L438.6,341.2L438.3,342.6"/>
+                        </g>
+                      </g>
+                    </g>
+                    <g id="knuckle-right" data-pivot="502.9,303.23">
+                      <path class="sil fine" d="M497.7,300.4L497.1,304.6L498.4,307.1L500.6,308.7L503.4,309.1L508.6,306.7L514.6,306.1L522.9,311.2L523.9,310.6L524.3,306L530.5,303.9L532.2,300.4L530.7,296.8L526.9,295.6L523.2,297.3L508.4,299L502.4,297.3L499.7,298.3ZM524.8,300.3L525.4,298.5L527.1,297.6L529.6,298.5L530.3,300.3L529.6,302.1L527.9,303L526.1,302.6Z"/>
+                      <path class="det fine" d="M505.3,305.2L503.4,306.3L500.5,305.2L499.8,303.2L500.5,301.2M499.7,303.2L500.8,305.7L502.9,306.5L505.4,305.3L506.1,303.2L505.4,301.1L502.9,300L500.8,300.7L499.7,303.2M499.7,303.2L500.5,305.2L502.9,306.4L505.3,305.3L506.1,303.2L504.9,300.8L502.9,300.1L500.9,300.8L499.7,303.2M500,303.2L501.4,305.8L503.4,306.1L505.1,305.1L505.8,303.2L505.1,301.4L502.4,300.3L500.7,301.3L500,303.2"/>
+                      <g id="finger-right">
+                        <path class="sil fine" d="M516.5,302.8L516.2,304.9L517.2,307.3L525,312.8L526.3,314.5L528.1,328.2L527.1,335.4L527.7,339.1L531,341.7L535.8,341.2L538,339.2L538.5,336.4L533.7,298.1L531,295.6L526,295.9L518.4,300.4Z"/>
+                        <path class="det fine" d="M525.6,300.2L527.5,302.2L529.4,300.3L527.6,298.4L525.6,300.2M525.7,300.2L527.6,298.5L529.3,300.3L527.5,302.1L525.7,300.2M529.8,336.9L531.2,339.2L533.1,339L534.1,337.4L532.6,335.1L530.8,335.3L529.8,336.9M530,336.9L531.3,339L533,338.8L533.9,337.4L532.6,335.3L530.9,335.5L530,336.9"/>
+                        <g id="tip-right" data-pivot="531.93,337.15">
+                          <path class="sil fine" d="M512.2,377L516.1,376.9L517.1,375.9L517.7,359.8L526.3,354.3L527.8,345L529.4,343.2L534.6,341L536.2,339.1L536.3,335.5L533.9,332.9L530.3,332.7L516.3,337.8L513.8,340L513.2,347.1L512.2,347.3Z"/>
+                          <path class="det fine" d="M517.2,347.3L517.2,358.2M516.2,341.9L516.5,343.3L517.6,344L519,343.7L519.7,342.6L519.4,341.2L518.2,340.5L516.9,340.8L516.2,341.9M530.1,336.9L530.5,338.2L531.7,338.9L533,338.6L533.7,337.4L533.4,336.1L532.2,335.4L530.8,335.7L530.1,336.9"/>
+                        </g>
+                      </g>
+                    </g>
+                  </g>
+                </g>
+              </g>
+            </g>
+            <path class="sil" d="M751.7,133.8L751.7,219.7L771.4,219.5L784.1,220.7L791.3,222.7L797.8,226.3L800.3,228.7L804.3,241.7L807.4,255.9L812.5,265.8L820,274L829.4,280L834.5,282.1L840,283.5L847.7,284.2L856.6,283.2L861.9,281.7L871.9,276.7L880.2,269.3L886.3,260.1L889.9,249.5L890.6,238.5L889.9,232.9L886.4,222.4L880.3,213.1L872,205.7L857.2,198.5L840.1,188.7L838.1,181.8L837.5,171.4L835.1,161L830.4,151.4L825.4,145.8L818.9,142L802.8,138.3L777.3,134.9Z"/>
+            <path class="det" d="M813.1,210.3L797.6,213.4M796,213.7L777.9,216.2M777,218.1L777.1,216.8L778,216.3L789.9,214.7M790.1,214.7L815,210M777.9,216.2L789.9,214.7M797.6,213.4L813.1,210.3M809.3,218.2L803.4,231.4M807.5,220.9L805.2,226.6L807.2,221.8L807.5,220.9M804.3,229.2L809.3,218.2M836.5,184.2L835.2,185L833,192.4L829.4,199.8M834.1,198.6L845.5,195.8"/>
+          </g>
+        </g>
+        <path class="sil" d="M679,445.8L676.4,457.8L677.2,469.4L681.4,481L688.8,491L698.3,498.3L704.5,501.1L710.9,502.9L723,503.6L733.9,501.2L741.3,497.7L749.6,491.2L855.7,385.1L795,324.3L688.4,431L683.4,437.2Z"/>
+      </g>
+    </g>
+    <path class="sil" d="M662.8,720.5L718.8,721.5L839.1,721.5L837.9,714.3L826.3,714L823.7,712.6L820.8,690.3L818.9,683.1L814.5,673.6L797.9,659L773.8,639.9L777.3,637.9L777.8,629.9L780,627.4L781,624.2L780,619.8L777,616.8L773.1,615.7L770.4,616.2L763.2,612.1L674.9,612.1L673.2,613.7L672.3,621L671.5,621.2L671.3,636.4L671.6,649.9L672.4,650.1L672.6,653.5L674.4,655.4L673.5,666.3L669.4,695.3Z"/>
+    <path class="det" d="M672.8,644.3L673.5,634.9L672.8,626.9M672.9,623.4L674.3,634.9L672.9,647.8M675.1,613.7L709.6,613.7M674.2,653.5L675,653L677.8,640.4L679.9,638L718.8,637.9M682.5,639.5L680.2,641.4L675.7,655M684.6,639.5L682.1,641.2L677.5,653.9L676.5,655.1M702.5,710.8L708.6,662.6L709.3,659.8L711.3,656.7L712.9,655.5L715.1,655.4L716.8,656.9L717.2,658.7L711.2,711.4L709.9,713.6L704.7,713.6L703.3,713.1L702.5,711M709.6,613.7L709.5,623.5M740.4,613.7L709.6,613.7M718.7,627.5L718.8,637.9M770.5,637.9L718.8,637.9M736.1,699.4L732.2,697.1L730.9,694.8L731.4,689L736.1,685.6M736.8,685.5L732.4,687.9L731.1,690.2L731.1,694.8L732.1,696.6L736.8,699.5M737.8,685.5L742.7,687.9L744,690.2L743.5,696L742.7,697.1L737.8,699.5M738.4,699.5L742.9,697.1L744.2,694.8L744.3,692.5L744.2,690.2L742.9,687.9L738.4,685.5M738.6,688.2L741.6,689.5L742.8,692.5L741.6,695.5L738.6,696.8M738.7,697.3L742,695.9L743.4,692.5L742,689.1L738.7,687.7M738.7,687.7L742,689.1L743.4,692.5L742,695.9L738.7,697.3M738.4,697.8L740.6,697.5L742.6,696L743.8,693.8L743.8,691.8M759.9,686.3L759.9,698.8M771.2,686.2L760.1,686.2M760,686.2L760,699M773.3,697.2L774.6,692.6L773.3,688M765.3,683.2L762.9,683.5L758.8,686L757.3,687.9L756,692.6L757.3,697.3L758.8,699.2L762.9,701.6L765.3,702M770,684.5L773.5,688L774.7,692.6L773.5,697.2L770,700.6M769.9,684.6L773.2,688L774.4,692.6L773.2,697.2L769.9,700.5M763.1,701.5L758.9,699.1L756.5,695L756.2,692.6L757.4,688L758.9,686L763.1,683.6M765.7,683.2L768.1,683.5L772.3,686L773.8,687.9L775,692.6L773.8,697.3L772.3,699.2L768.1,701.6L765.7,702M763.1,701.5L759.2,699.2L757.7,697.3L756.5,692.6L757.7,687.9L759.2,686L763.1,683.6M767.1,628.5L770.5,637.9M770.5,637.9L767.1,628.5M760.9,689.7L770.4,689.7M771.3,699L771.3,686.2M771.3,699L771.3,686.2M720.7,713.8L727.8,713.8L734,714L727.3,714L720.7,713.8M756.3,683.2L756.9,681.7L758.4,681.1L759.9,681.7L760.5,683.2L759.9,684.7L758.4,685.4L756.9,684.7L756.3,683.2M771,702L771.6,700.4L773.1,699.8L774.6,700.4L775.2,702L774.6,703.5L773.1,704.1L771.6,703.5L771,702M785.2,714.4L787.5,714.4L789.8,714.5L787.5,714.5L785.2,714.4"/>
+    <circle class="acc" id="arm-light" cx="796.9" cy="694.9" r="5.1"/>
+  </g>
+</g>
+</svg>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+const meta = {"source": "franka_description fr3 (Apache 2.0, Franka Robotics GmbH) + robotiq_description 2F-85 (BSD 3-Clause, PickNik Robotics)", "viewBox": [0, 0, 1000, 747], "pxPerMetre": 781.25, "groundY": 721.49, "joints": {"joint1": {"link": "link1", "limits": [-2.9007, 2.9007], "pivot": [718.75, 461.34], "fixedAt": 0.0}, "joint2": {"link": "link2", "limits": [-1.8361, 1.8361], "pivot": [718.75, 461.34], "drive": "joint2", "multiplier": 1.0, "sign": -1}, "joint3": {"link": "link3", "limits": [-2.9007, 2.9007], "pivot": [893.32, 286.77], "fixedAt": 0.0}, "joint4": {"link": "link4", "limits": [-3.077, -0.1169], "pivot": [847.74, 241.19], "drive": "joint4", "multiplier": 1.0, "sign": 1}, "joint5": {"link": "link5", "limits": [-2.8763, 2.8763], "pivot": [547.74, 176.74], "fixedAt": 0.0}, "joint6": {"link": "link6", "limits": [0.4398, 4.6216], "pivot": [547.74, 176.74], "drive": "joint6", "multiplier": 1.0, "sign": 1}, "joint7": {"link": "link7", "limits": [-3.0508, 3.0508], "pivot": [478.99, 176.74], "fixedAt": 0.0}, "robotiq_85_left_inner_knuckle_joint": {"link": "inner-knuckle-left", "limits": [0.0, 0.8], "pivot": [469.07, 308.32], "drive": "gripper", "multiplier": 1.0, "sign": -1}, "robotiq_85_right_inner_knuckle_joint": {"link": "inner-knuckle-right", "limits": [-0.8, 0.0], "pivot": [488.91, 308.32], "drive": "gripper", "multiplier": -1.0, "sign": -1}, "robotiq_85_left_knuckle_joint": {"link": "knuckle-left", "limits": [0.0, 0.8], "pivot": [455.08, 303.23], "drive": "gripper", "multiplier": 1.0, "sign": -1}, "robotiq_85_right_knuckle_joint": {"link": "knuckle-right", "limits": [-0.8, 0.0], "pivot": [502.9, 303.23], "drive": "gripper", "multiplier": -1.0, "sign": -1}, "robotiq_85_left_finger_tip_joint": {"link": "tip-left", "limits": [-0.8, 0.0], "pivot": [426.06, 337.15], "drive": "gripper", "multiplier": -1.0, "sign": -1}, "robotiq_85_right_finger_tip_joint": {"link": "tip-right", "limits": [0.0, 0.8], "pivot": [531.93, 337.15], "drive": "gripper", "multiplier": 1.0, "sign": -1}}, "tcpNeutral": [478.99, 375.64], "scene": {"pcA": {"x": 234.38, "size": [156.25, 281.25]}, "pcB": {"x": 421.88, "size": [156.25, 78.12]}, "stackOffset": [-187.5, -281.25]}, "keyframes": [{"name": "neutral", "joint2": -45.0, "joint4": -135.0, "joint6": 90.0, "gripper": 0.0}, {"name": "reach", "joint2": -24.39, "joint4": -154.34, "joint6": 129.94, "gripper": 0.0}, {"name": "grip", "joint2": -10.42, "joint4": -159.52, "joint6": 149.1, "gripper": 0.0}, {"name": "gripClosed", "joint2": -10.42, "joint4": -159.52, "joint6": 149.1, "gripper": 23.61}, {"name": "raise", "joint2": -37.81, "joint4": -146.02, "joint6": 108.21, "gripper": 23.61}, {"name": "lift", "joint2": -31.15, "joint4": -111.53, "joint6": 80.39, "gripper": 23.61}, {"name": "aboveA", "joint2": 20.91, "joint4": -51.81, "joint6": 72.72, "gripper": 23.61}, {"name": "stack", "joint2": 13.77, "joint4": -71.89, "joint6": 85.66, "gripper": 23.61}, {"name": "release", "joint2": 13.77, "joint4": -71.89, "joint6": 85.66, "gripper": 0.0}, {"name": "retreat", "joint2": 20.91, "joint4": -51.81, "joint6": 72.72, "gripper": 0.0}]}
+/* Animation for the SVG written by scripts/franka_to_svg.py.
+   Plain JS on purpose: the blog component imports it, and the script inlines it
+   into the standalone franka-arm.html. */
+
+/* Seconds per move, in order. Joint angles live in franka-arm.json ("keyframes"), in degrees. */
+const MOVES = [
+    { to: 'reach', duration: 0.8 },
+    { to: 'grip', duration: 0.45, ease: 'power1.inOut' },
+    { to: 'gripClosed', duration: 0.25, ease: 'power1.out' }, // gripper closes
+    { to: 'raise', duration: 0.4, ease: 'power1.in' },
+    { to: 'lift', duration: 0.4, ease: 'none' },
+    { to: 'aboveA', duration: 0.8, ease: 'power1.out' },
+    { to: 'stack', duration: 0.6, ease: 'bounce.out' }, // set down with a small settle bounce
+    { to: 'release', duration: 0.25, ease: 'power1.out' }, // gripper opens
+    { to: 'retreat', duration: 0.4 },
+    { to: 'neutral', duration: 0.7 },
+]
+const LEAD_IN = 0.2
+const HOLD = 0.7 // pause at each end of the loop
+
+const ARM = ['joint2', 'joint4', 'joint6'] // the joints between the base and the hand
+const DRIVES = [...ARM, 'gripper'] // the values a keyframe sets
+
+function createArmAnimation(gsap, svg, meta, { reducedMotion = false } = {}) {
+    const $ = (sel) => svg.querySelector(sel)
+    const frames = Object.fromEntries(meta.keyframes.map((k) => [k.name, k]))
+    const pick = (pose) => Object.fromEntries(DRIVES.map((d) => [d, pose[d]]))
+
+    /* Every moving link: the arm joints, and the gripper linkage that follows 'gripper'. */
+    const rig = Object.values(meta.joints)
+        .filter((j) => j.drive)
+        .map((j) => ({ ...j, el: $('#' + j.link) }))
+
+    /* Screen rotation of one joint, relative to the neutral pose the SVG was drawn in. */
+    const turn = (j, pose) => j.sign * j.multiplier * (pose[j.drive] - frames.neutral[j.drive])
+
+    /* Where the hand group sits for a pose: the nested joint rotations, composed. */
+    const handMatrix = (pose) => {
+        const m = new DOMMatrix()
+        for (const name of ARM) {
+            const j = meta.joints[name]
+            const [px, py] = j.pivot
+            m.translateSelf(px, py).rotateSelf(turn(j, pose)).translateSelf(-px, -py)
+        }
+        return m
+    }
+    const css = (m) => `matrix(${m.a} ${m.b} ${m.c} ${m.d} ${m.e} ${m.f})`
+
+    const scene = $('#scene')
+    const hand = $('#hand')
+    const pcB = $('#pcB')
+    const pcMerged = $('#pcMerged')
+    const [stackX, stackY] = meta.scene.stackOffset
+
+    /* B keeps this transform inside the hand group for as long as it is carried. */
+    const carried = css(handMatrix(frames.gripClosed).inverse())
+    const stacked = `translate(${stackX} ${stackY})`
+
+    const state = pick(frames.neutral)
+    let tCarry = 0
+    let tPlaced = 0
+    let where = 'ground'
+
+    const tl = gsap.timeline({
+        paused: true,
+        repeat: reducedMotion ? 0 : -1,
+        yoyo: true,
+        repeatDelay: HOLD,
+        defaults: { ease: 'power2.inOut' },
+        onUpdate: render,
+    })
+
+    function render() {
+        for (const j of rig) {
+            j.el.setAttribute('transform', `rotate(${turn(j, state)} ${j.pivot[0]} ${j.pivot[1]})`)
+        }
+
+        /* Reparent B: on the ground, in the hand while carried, on top of A afterwards. */
+        const t = tl.time()
+        const next = t < tCarry ? 'ground' : t < tPlaced ? 'hand' : 'stack'
+        if (next !== where) {
+            where = next
+            if (next === 'hand') {
+                hand.insertBefore(pcB, hand.firstChild) // under the fingers
+                pcB.setAttribute('transform', carried)
+            } else {
+                scene.insertBefore(pcB, pcMerged)
+                if (next === 'stack') pcB.setAttribute('transform', stacked)
+                else pcB.removeAttribute('transform')
+            }
+        }
+    }
+
+    /* ---- arm ---- */
+
+    tl.to({}, { duration: LEAD_IN })
+    for (const move of MOVES) {
+        tl.to(state, { ...pick(frames[move.to]), duration: move.duration, ...(move.ease && { ease: move.ease }) })
+        if (move.to === 'gripClosed') tCarry = tl.duration()
+        if (move.to === 'stack') tPlaced = tl.duration()
+    }
+
+    /* ---- merge: two stacked outlines become one tower ---- */
+
+    const seam = $('#seam')
+    const mergedBox = $('#pcMerged rect')
+    const mergedDetail = svg.querySelectorAll('#pcMerged > :not(rect):not(.acc)')
+    const mergedLed = $('#pcMerged-led')
+    const parts = svg.querySelectorAll('#pcA > :not(.acc), #pcB > :not(.acc)')
+    const ledA = $('#pcA-led')
+    const ledB = $('#pcB-led')
+    const ledTarget = { cx: +mergedLed.getAttribute('cx'), cy: +mergedLed.getAttribute('cy') }
+    const seamLength = seam.getTotalLength()
+    const boxLength = mergedBox.getTotalLength()
+
+    gsap.set(pcMerged, { opacity: 1 })
+    gsap.set(mergedBox, { fill: 'none', opacity: 0, strokeDasharray: boxLength, strokeDashoffset: boxLength })
+    gsap.set([mergedDetail, mergedLed], { opacity: 0 })
+    gsap.set(seam, { opacity: 0, strokeDasharray: seamLength, strokeDashoffset: seamLength })
+
+    const merge = tPlaced + 0.15
+    tl.set(seam, { opacity: 1 }, merge)
+    tl.to(seam, { strokeDashoffset: 0, duration: 0.45, ease: 'power2.out' }, merge) // orange sweep along the seam
+    tl.set(mergedBox, { opacity: 1 }, merge + 0.3)
+    tl.to(mergedBox, { strokeDashoffset: 0, duration: 0.8 }, merge + 0.3)
+    tl.to(parts, { opacity: 0, duration: 0.6 }, merge + 0.4)
+    tl.to(mergedDetail, { opacity: 1, duration: 0.6 }, merge + 0.6)
+    tl.to(seam, { opacity: 0, duration: 0.4 }, merge + 0.6)
+    tl.to(ledA, { attr: ledTarget, duration: 0.6 }, merge + 0.4)
+    tl.to(ledB, { attr: { cx: ledTarget.cx - stackX, cy: ledTarget.cy - stackY }, duration: 0.6 }, merge + 0.4)
+    tl.set([ledA, ledB], { opacity: 0 }, merge + 1.0) // the two LEDs are now one
+    tl.set(mergedLed, { opacity: 1 }, merge + 1.0)
+
+    render()
+
+    /* ---- playback: autoplay, pause on hover and when off screen ---- */
+
+    let hovered = false
+    let visible = true
+    const sync = () => (hovered || !visible ? tl.pause() : tl.play())
+    const enter = () => { hovered = true; sync() }
+    const leave = () => { hovered = false; sync() }
+    let observer
+
+    if (reducedMotion) {
+        tl.progress(1) // the merged final frame, no motion
+        render()
+    } else {
+        svg.addEventListener('pointerenter', enter)
+        svg.addEventListener('pointerleave', leave)
+        if ('IntersectionObserver' in window) {
+            observer = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; sync() })
+            observer.observe(svg)
+        }
+        sync()
+    }
+
+    return {
+        timeline: tl,
+        destroy() {
+            svg.removeEventListener('pointerenter', enter)
+            svg.removeEventListener('pointerleave', leave)
+            if (observer) observer.disconnect()
+            tl.pause(0)
+            render()
+            tl.kill()
+        },
+    }
+}
+
+// window.armAnimation.timeline is the GSAP timeline, handy for scrubbing in the console.
+window.armAnimation = createArmAnimation(gsap, document.getElementById('franka-arm'), meta, {
+    reducedMotion: matchMedia('(prefers-reduced-motion: reduce)').matches,
+})
+</script>
+</body>
+</html>
