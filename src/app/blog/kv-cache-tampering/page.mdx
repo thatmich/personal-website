@@ -1,4 +1,5 @@
 import PostHeader from '../PostHeader'
+import { postMetadata } from '../postMetadata'
 import CacheIntro from './CacheIntro'
 import TamperToggle from './TamperToggle'
 import MerkleVerifier from './MerkleVerifier'
@@ -9,11 +10,11 @@ export const post = {
     title: "My Thesis at Tsinghua CS: Tampering with an LLM's KV Cache",
     date: '2026-08-18',
     tags: ['llm-security', 'confidential-computing', 'research'],
+    slug: 'kv-cache-tampering',
+    description: "How an attacker with storage access can tamper with an LLM's on-disk KV cache, and a Merkle-tree defense that costs 5–9% throughput. A retrospective on my Tsinghua undergraduate thesis.",
 }
 
-export const metadata = {
-    title: `${post.title} — Michio Sun`,
-}
+export const metadata = postMetadata(post)
 
 <PostHeader post={post} />
 

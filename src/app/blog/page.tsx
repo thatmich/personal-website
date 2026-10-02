@@ -1,22 +1,15 @@
-import fs from 'fs'
-import path from 'path'
+import type { Metadata } from 'next'
 import Link from 'next/link'
-import type { PostMeta } from './PostHeader'
+import { getPosts } from './posts'
+import { AUTHOR } from './postMetadata'
 
-const BLOG_DIR = path.join(process.cwd(), 'src', 'app', 'blog')
+const description = `Posts by ${AUTHOR} on robot learning, ML systems and LLM security.`
 
-async function getPosts(): Promise<Array<PostMeta & { slug: string }>> {
-    const slugs = fs.readdirSync(BLOG_DIR, { withFileTypes: true })
-        .filter((entry) => entry.isDirectory())
-        .filter((entry) => fs.existsSync(path.join(BLOG_DIR, entry.name, 'page.mdx')))
-        .map((entry) => entry.name)
-
-    const posts = await Promise.all(slugs.map(async (slug) => {
-        const mod = await import(`./${slug}/page.mdx`)
-        return { slug, ...(mod.post as PostMeta) }
-    }))
-
-    return posts.sort((a, b) => (a.date < b.date ? 1 : -1))
+export const metadata: Metadata = {
+    title: `Blog — ${AUTHOR}`,
+    description,
+    alternates: { canonical: '/blog' },
+    openGraph: { type: 'website', title: `Blog — ${AUTHOR}`, description, url: '/blog', siteName: AUTHOR },
 }
 
 export default async function BlogIndex() {

@@ -1,14 +1,15 @@
 import PostHeader from '../PostHeader'
+import { postMetadata } from '../postMetadata'
 
 export const post = {
     title: 'Hello, World',
     date: '2026-07-31',
     tags: ['meta'],
+    slug: 'hello-world',
+    description: 'The first post: what this blog is for.',
 }
 
-export const metadata = {
-    title: `${post.title} — Michio Sun`,
-}
+export const metadata = postMetadata(post)
 
 <PostHeader post={post} />
 

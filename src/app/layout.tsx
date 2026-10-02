@@ -1,12 +1,20 @@
 import '../index.css'
 import type { Metadata } from 'next'
+import { AUTHOR, SITE_URL } from './blog/postMetadata'
  
+const description =
+  'Michio Sun is a machine learning engineer in Tokyo working on AI for robotics. Projects, and a blog on robot learning and ML systems.'
+
 export const metadata: Metadata = {
-  title: 'Michio Sun',
-  description: "Michio Sun's website created with Next.js",
+  metadataBase: new URL(SITE_URL),
+  title: AUTHOR,
+  description,
+  authors: [{ name: AUTHOR, url: SITE_URL }],
   icons: {
-    icon: 'icon.png',
-  }
+    icon: '/icon.png',
+  },
+  openGraph: { type: 'website', title: AUTHOR, description, url: '/', siteName: AUTHOR },
+  twitter: { card: 'summary', title: AUTHOR, description },
 }
 
 export default function RootLayout({

@@ -1,7 +1,11 @@
 export interface PostMeta {
     title: string
     date: string
+    slug: string // the post's folder name
+    description: string // one or two sentences, shown in search results and link previews
     tags?: string[]
+    image?: string // link-preview image, 1200x630, path from the site root
+    imageAlt?: string
 }
 
 export default function PostHeader({ post }: { post: PostMeta }) {
