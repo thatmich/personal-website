@@ -1,6 +1,7 @@
 import '../index.css'
 import type { Metadata } from 'next'
 import { AUTHOR, FEED, SITE_URL } from './blog/postMetadata'
+import Analytics from './Analytics'
  
 const description =
   'Michio Sun is a machine learning engineer in Tokyo working on AI for robotics. Projects, and a blog on robot learning and ML systems.'
@@ -27,6 +28,7 @@ export default function RootLayout({
         <html lang="en">
             <body>
                 <div id="root">{children}</div>
+                <Analytics />
             </body>
         </html>
     )
