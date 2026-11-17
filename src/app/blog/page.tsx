@@ -27,6 +27,9 @@ export default async function BlogIndex() {
                     RSS
                 </a>
             </div>
+            <p className="blog-index-intro">
+                Notes on robot learning, ML systems and LLM security — {posts.length} {posts.length === 1 ? 'post' : 'posts'} so far.
+            </p>
             <div className="blog-posts">
                 {posts.map((post) => (
                     <Link href={`/blog/${post.slug}`} className="blog-post" key={post.slug}>
@@ -46,6 +49,7 @@ export default async function BlogIndex() {
                                     <h3 className="blog-post-title">{post.title}</h3>
                                     <span className="blog-post-date">{post.date}</span>
                                 </div>
+                                <p className="blog-post-description">{post.description}</p>
                                 {post.tags && (
                                     <div className="blog-post-tags">
                                         {post.tags.map((tag) => (

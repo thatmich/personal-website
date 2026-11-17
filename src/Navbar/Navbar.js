@@ -103,14 +103,6 @@ const Navbar = () => {
                 <li className="nav__item">
                   <div
                     className="nav__link"
-                    onClick={(e) => nav_link_click(e, "#portfolio")}
-                  >
-                    Portfolio
-                  </div>
-                </li>
-                <li className="nav__item">
-                  <div
-                    className="nav__link"
                     onClick={(e) => nav_link_click(e, "#contact")}
                   >
                     Contact

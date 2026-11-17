@@ -20,10 +20,6 @@
         color: var(--first-color);
     }
 
-    :root{
-        --portfolio-margin: 1em;
-        --portfolio-first-margin: 1em;
-    }
 }
 
 .Home {
@@ -283,182 +279,77 @@
     margin-right: 1em;
 }
 
-.Portfolio{
+.HomeBlog{
     display: flex;
     flex-direction: column;
     margin-top: 10vh;
 }
 
-.portfolio-item{
-    flex: 0 0 auto; 
+.home-blog-header{
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1em;
+    margin-bottom: 1em;
+}
+
+.home-blog-list{
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    margin: var(--portfolio-margin);
-    transition: transform 0.3s ease;
-    width: 35vw;
+    background-color: var(--background-color);
+    border-radius: 1em;
+    overflow: hidden;
 }
 
-.portfolio-header-container{
+.home-blog-item{
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative; /* This makes the container the positioning context */
+    align-items: baseline;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5em 1em;
+    padding: 1.2em 2.5em;
+    border-bottom: 1px solid var(--highlight-color);
+    color: inherit;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
 }
 
-.portfolio-img{
-    max-width: 100%;
-    cursor: pointer;
-    border-radius: 2em 2em 0 0;
+.home-blog-item:last-child{
+    border-bottom: none;
 }
 
-.portfolio-text{
-    position: absolute; /* Positioning the text absolutely within the container */
-    top: 50%; /* Center vertically */
-    left: 50%; /* Center horizontally */
-    width: 80%; /* Make the text container the same width as the image */
-    transform: translate(-50%, -50%); /* Offset the text by its own height and width to center it */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    text-align: center;
-    font-family: var(--portfolio-font);
-    font-size: 2em;
-    pointer-events: none;
+.home-blog-item:hover{
+    background-color: var(--highlight-color);
+}
+
+.home-blog-item:hover .home-blog-title{
+    color: var(--first-color);
+}
+
+.home-blog-title{
+    font-family: var(--header-font);
+    font-size: 1rem;
+    transition: color 0.3s ease;
+}
+
+.home-blog-date{
+    font-size: 0.95rem;
+}
+
+.home-blog-all{
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.home-blog-all:hover{
+    color: var(--first-color);
 }
 
 @media screen and (max-width: 850px) {
-    .portfolio-text{
-        font-size: 1.5em;
-    }
-    
-}
-
-
-.portfolio-item:hover{
-    transform: scale(1.1);
-}
-
-.portfolio-text i {
-    margin-left: 0.5em;
-}
-
-.portfolio-header-container{
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-}
-
-.portfolio-description{
-    flex-grow: 1;
-    display: flex;
-    background-color: var(--background-color);
-    width: 100%;
-    min-height: 6em;
-    padding: 1.5em;
-    line-height: 1.5em;
-    border-radius: 0 0 2em 2em;
-}
-
-
-.carousel-container {
-    position: relative; /* Ensure relative positioning */
-    display: flex;
-    flex-direction: column;
-    left: 50%;
-    right: 50%;
-    width: 100vw; /* Full viewport width */
-    margin-left: -50vw; /* Shift left by half the viewport width */
-    margin-right: -50vw; /* Shift right by half the viewport width */
-    margin-top: 1em;
-    overflow-x: visible; /* Allow horizontal overflow */
-    overflow-y: hidden; /* Hide vertical overflow if needed */
-}
-
-
-.carousel-wrapper {
-    display: flex;
-    width: 100%;
-    position: relative;
-}
-
-
-.carousel-content-wrapper {
-    overflow: hidden;
-    width: 100%;
-    height: 100%;
-}
-
-.carousel-content {
-    display: flex;
-    transition: all 250ms linear;
-    -ms-overflow-style: none;  /* hide scrollbar in IE and Edge */
-    scrollbar-width: none;  /* hide scrollbar in Firefox */
-}
-
-/* hide scrollbar in webkit browser */
-.carousel-content::-webkit-scrollbar, .carousel-content::-webkit-scrollbar {
-    display: none;
-}
-
-.carousel-content > * {
-    width: 100%;
-    flex-shrink: 0;
-    flex-grow: 1;
-}
-
-.carousel-content.show-2 > * {
-    width: calc(100% / 2 - var(--portfolio-margin) - var(--portfolio-first-margin));
-}
-
-.carousel-content.show-3 > * {
-    width: calc(100% / 3 - 2 * var(--portfolio-margin));
-}
-
-.carousel-content.show-4 > * {
-    width: calc(100% / 4 - 2 * var(--portfolio-margin));
-}
-
-.portfolio-carousel-nav{
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
-    align-items: center;
-}
-
-.carousel-nav-button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5rem;
-    margin: 0.25em;
-    width: 2em;
-    height: 2em;
-    border-radius: 100%;
-    background-color: var(--background-color);
-    color: #b4b4b4;
-    user-select: none;
-}
-.carousel-nav-button:hover {
-    background-color: var(--highlight-color);
-    cursor: pointer;
-}
-
-.carousel-nav-button.disabled {
-    color: rgb(95, 95, 95);
-    background-color: var(--background-color);
-    cursor: default; 
-}
-
-.carousel-nav-button:focus {
-    outline: none;
-}
-
-@media (hover: none) and (pointer: coarse) {
-    .carousel-nav-button {
-        display: none;
+    .home-blog-item{
+        padding: 1em 1.5em;
     }
 }
 

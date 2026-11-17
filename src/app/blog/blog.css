@@ -57,6 +57,15 @@
 
 /* ---- post list (index page) ---- */
 
+.Blog p.blog-index-intro{
+    margin: 0 0 1.5em;
+}
+
+.Blog p.blog-post-description{
+    margin-top: 0.6em;
+    line-height: 1.5;
+}
+
 .blog-posts{
     display: flex;
     flex-direction: column;

@@ -33,15 +33,12 @@ a {
  --highlight-color: hsla(0, 0%, 50%, 0.2);
  --background-color: hsla(0, 0%, 20%, 0.2);
  --body-font: "Montserrat", sans-serif;
- --portfolio-font: "Californian FB", serif;
  --header-font: "Montserrat", sans-serif;
  --h2-font-size: 1.25rem;
  --small-font-size: 0.813rem;
  --font-semi-bold: 600;
  --z-tooltip: 10;
  --z-fixed: 100;
- --portfolio-margin: 2em;
- --portfolio-first-margin: 2em;
 }
 
 
