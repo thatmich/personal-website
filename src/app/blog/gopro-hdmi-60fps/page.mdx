@@ -1,0 +1,42 @@
+import PostHeader from '../PostHeader'
+import { postMetadata } from '../postMetadata'
+import References, { Cite } from '../kv-cache-tampering/References'
+
+export const post = {
+    title: 'Is Your GoPro Really Giving You 60 fps?',
+    date: '2026-11-18',
+    tags: ['robotics'],
+    slug: 'gopro-hdmi-60fps',
+    description: 'Streaming a GoPro Hero9 over HDMI into a capture card gave 30 unique frames per second, each repeated twice. Why that matters when downsampling to 20 Hz for UMI-style data collection.',
+}
+
+export const metadata = postMetadata(post)
+
+<PostHeader post={post} />
+
+Recently I've been experimenting with the GoPro Hero9 Black. If you're thinking about reproducing UMI<Cite n={1} /> or FastUMI<Cite n={2} />, check whether your camera feed is really 60 fps or only nominally 60 fps.
+
+When I streamed through the Media Mod's HDMI output into a USB capture card, the 60 fps feed turned out to be 30 unique frames per second, each repeated twice. Recordings from the SD card, on the other hand, were true 59.94 fps. Others have reported the same duplication ([gopro/labs#180](https://github.com/gopro/labs/issues/180)), though it may depend on the capture device, since some users get clean 60 fps over HDMI.
+
+The catch is that downsampling a duplicated stream to 20 Hz leaves frames unevenly spaced in time, alternating 33 ms and 67 ms gaps, while every timestamp claims 50 ms.
+
+The UMI videos I checked, which were recorded on the camera, don't have this problem. The FastUMI episodes I sampled show the same alternating pattern as my own HDMI captures. It clearly hasn't stopped either group from training working policies, but as far as I know its effect hasn't been measured.
+
+If you want clean frames, record to the SD card or verify your capture chain first.
+
+<References items={[
+    {
+        authors: 'C. Chi, Z. Xu, C. Pan, E. Cousineau, B. Burchfiel, S. Feng, R. Tedrake, S. Song',
+        title: 'Universal Manipulation Interface: In-The-Wild Robot Teaching Without In-The-Wild Robots',
+        venue: 'arXiv:2402.10329, 2024',
+        url: 'https://arxiv.org/abs/2402.10329',
+    },
+    {
+        authors: 'Zhaxizhuoma et al.',
+        title: 'FastUMI: A Scalable and Hardware-Independent Universal Manipulation Interface with Dataset',
+        venue: 'arXiv:2409.19499, 2024',
+        url: 'https://arxiv.org/abs/2409.19499',
+    },
+]} />
+
+[Back to all posts](/blog)
